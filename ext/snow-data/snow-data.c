@@ -1015,28 +1015,14 @@ static VALUE sd_get_string(int argc, VALUE *argv, VALUE self)
   return rb_str_new((const char *)(data + offset), length);
 }
 
-/*
-  call-seq:
-      set_string(offset, value) -> value
-
-  Copies the string value into the buffer at the offset supplied. If the string
-  plus null-terminating character is too large for the buffer, it will be
-  truncated to fit at least 1 character and the null terminator, otherwise no
-  data will be copied and only a null terminator character will be stored to
-  the block.
-
-  This method does not work on zero-length blocks.
- */
-static VALUE sd_set_string(VALUE self, VALUE sd_offset, VALUE sd_value)
+static VALUE sd_set_string_nullterm(VALUE self, VALUE sd_offset, VALUE sd_value, int null_terminated)
 {
   uint8_t *data              = DATA_PTR(self);
   const uint8_t *string_data = (const uint8_t *)StringValueCStr(sd_value);
   size_t offset              = NUM2SIZET(sd_offset);
   /* Subtract 1 from the buffer length to account for a null character) */
-  size_t length              = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE)) - 1;
+  size_t length              = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE)) - null_terminated;
   size_t str_length          = RSTRING_LEN(sd_value);
-
-  sd_check_null_block(self);
 
   if (offset >= length) {
     return sd_value;
@@ -1050,9 +1036,39 @@ static VALUE sd_set_string(VALUE self, VALUE sd_offset, VALUE sd_value)
   if (length > 0) {
     memcpy(data + offset, string_data, length);
   }
-  data[offset + length] = '\0';
+
+  if (null_terminated) {
+    data[offset + length] = '\0';
+  }
 
   return sd_value;
+}
+
+/*
+  call-seq:
+      set_string(offset, value, null_terminated = false) -> value
+
+  Copies the string value into the buffer at the offset supplied.
+
+  If null_terminated is true, it will always write a null-terminating character
+  if it fits. This means that you need at least string.bytesize + 1 bytes
+  available from the offset onwards to fully story a string, otherwise the
+  string's contents will be truncated to fit the null-terminating character.
+
+  If null_terminated is false, no null character is written and only the string
+  bytes are copied to the block. If the full string does not fit, it will be
+  truncated.
+ */
+static VALUE sd_set_string(int argc, VALUE *argv, VALUE self)
+{
+  VALUE sd_offset, sd_value, sd_null_terminated;
+
+  sd_check_null_block(self);
+  rb_check_frozen(self);
+
+  rb_scan_args(argc, argv, "21", &sd_offset, &sd_value, &sd_null_terminated);
+
+  return sd_set_string_nullterm(self, sd_offset, sd_value, !!RTEST(sd_null_terminated));
 }
 
 /*
@@ -1608,5 +1624,5 @@ void Init_snowdata_bindings(void)
   rb_define_method(sd_memory_klass, "get_signed_char", sd_get_signed_char, 1);
   rb_define_method(sd_memory_klass, "set_signed_char", sd_set_signed_char, 2);
   rb_define_method(sd_memory_klass, "get_string", sd_get_string, -1);
-  rb_define_method(sd_memory_klass, "set_string", sd_set_string, 2);
+  rb_define_method(sd_memory_klass, "set_string", sd_set_string, -1);
 }
