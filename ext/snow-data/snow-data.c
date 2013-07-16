@@ -1113,6 +1113,10 @@ static VALUE sd_memory_new(int argc, VALUE *argv, VALUE self)
   size = 0;
   alignment = SIZEOF_VOIDP;
 
+  if (address == NULL) {
+    rb_raise(rb_eArgError, "Address is NULL (%p).", address);
+  }
+
   if (RTEST(sd_size)) {
     size = NUM2SIZET(sd_size);
   } else {
