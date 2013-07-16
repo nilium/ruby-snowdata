@@ -1172,7 +1172,14 @@ static VALUE sd_memory_realloc(int argc, VALUE *argv, VALUE self)
   VALUE sd_size;
   VALUE sd_alignment;
 
+  /*
+    Don't check for null/zero length here, as it is safe to reuse a memory via
+    realloc!. It's less safe for structs and arrays, but you just have to do the
+    sane thing in most cases. Granted, I'm a hypocrite for saying you need to
+    do the sane thing after writing this gem.
+   */
   rb_check_frozen(self);
+
   rb_scan_args(argc, argv, "11", &sd_size, &sd_alignment);
 
   size       = NUM2SIZET(sd_size);
