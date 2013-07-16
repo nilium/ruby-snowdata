@@ -1097,7 +1097,7 @@ static VALUE sd_memory_new(int argc, VALUE *argv, VALUE self)
 
   address = (void *)SD_NUM_TO_INTPTR_T(sd_address);
   size = 0;
-  alignment = 1;
+  alignment = SIZEOF_VOIDP;
 
   if (RTEST(sd_size)) {
     size = NUM2SIZET(sd_size);
