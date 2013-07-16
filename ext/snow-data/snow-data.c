@@ -1330,10 +1330,8 @@ static VALUE sd_memory_copy(int argc, VALUE *argv, VALUE self)
   } else if (RTEST(rb_obj_is_kind_of(sd_source, rb_cNumeric))) {
     /* Otherwise, if it's a Numeric, try to convert what is assumed to be an
       address to a pointer */
-    sd_memory_copy_address:
     source_pointer = (uint8_t *)SD_NUM_TO_INTPTR_T(sd_source);
   } else {
-    sd_memory_copy_invalid_type:
     rb_raise(rb_eTypeError,
       "Source object must be type of numeric (address) or Data- got %s",
       rb_obj_classname(sd_source));
@@ -1462,7 +1460,6 @@ sd_memory_copy_skip_data_check: /* skip from address check */
 static VALUE sd_memory_to_s(int argc, VALUE *argv, VALUE self)
 {
   VALUE null_terminated;
-  VALUE string_rep;
   size_t byte_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const char *data = DATA_PTR(self);
 
