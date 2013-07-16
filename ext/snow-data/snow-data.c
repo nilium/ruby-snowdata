@@ -1073,15 +1073,16 @@ static VALUE sd_set_string(int argc, VALUE *argv, VALUE self)
 
 /*
   call-seq:
-      new(address, size = 0, alignment = 1) => Memory
+      new(address, size, alignment = SIZEOF_VOID_POINTER) => Memory
 
-  Creates a new Memory object that wraps an existing pointer. Size and alignment
-  are optional and default to zero and 1, respectively.
+  Creates a new Memory object that wraps an existing pointer. Alignment is
+  optional and defaults to the size of a pointer (Memory::SIZEOF_VOID_POINTER).
 
   Memory objects created with this method will not attempt to free the memory
   they wrap, as they did not allocate it and so do not own it.
 
-  If a sub
+  If a subclass overrides ::new, it is also aliased as ::wrap and ::__wrap__.
+  Subclasses may override ::wrap but must not override ::__wrap__.
  */
 static VALUE sd_memory_new(int argc, VALUE *argv, VALUE self)
 {
