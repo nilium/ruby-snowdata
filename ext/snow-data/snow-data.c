@@ -1078,8 +1078,21 @@ static VALUE sd_set_string(int argc, VALUE *argv, VALUE self)
   Creates a new Memory object that wraps an existing pointer. Alignment is
   optional and defaults to the size of a pointer (Memory::SIZEOF_VOID_POINTER).
 
-  Memory objects created with this method will not attempt to free the memory
-  they wrap, as they did not allocate it and so do not own it.
+  Size must be greater than zero. Zero-sized blocks are not permitted as they
+  render most memory functionality useless and make it very difficult to ensure
+  nothing bad is happening when you do bad things with snow-data. Because, let's
+  be honest with ourselves for a moment, everyone using this gem? They're bad
+  people. They're very bad people.
+
+  Note that Memory objects created with this method will not attempt to free
+  the memory they wrap, as they did not allocate it and so do not own it. If
+  an address held by a Memory object is invalid, the Memory object is also
+  implicitly invalid as well, though there is no way for it to check this. You
+  are responsible for freeing any memory not allocated through ::malloc and
+  Memory subclasses.
+
+  It is an ArgumentError to provide a size of zero, nil, or false. It is also
+  an ArgumentError to provide a NULL (zero) address.
 
   If a subclass overrides ::new, it is also aliased as ::wrap and ::__wrap__.
   Subclasses may override ::wrap but must not override ::__wrap__.
