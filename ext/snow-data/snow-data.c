@@ -975,7 +975,7 @@ static VALUE sd_set_signed_char(VALUE self, VALUE offset, VALUE value)
   If length is nil, the string is extracted from offset up to the first null
   character. If length is -1, it extracts all characters from offset onward in
   the string and returns it. Otherwise, for any other length, it tries to copy
-  length characters from the buffer before the end of the block.
+  length characters from the block before the end of the block.
 
   This method does not work on zero-length blocks.
  */
@@ -1020,7 +1020,7 @@ static VALUE sd_set_string_nullterm(VALUE self, VALUE sd_offset, VALUE sd_value,
   uint8_t *data              = DATA_PTR(self);
   const uint8_t *string_data = (const uint8_t *)StringValueCStr(sd_value);
   size_t offset              = NUM2SIZET(sd_offset);
-  /* Subtract 1 from the buffer length to account for a null character) */
+  /* Subtract 1 from the block length to account for a null character) */
   size_t length              = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE)) - null_terminated;
   size_t str_length          = RSTRING_LEN(sd_value);
 
@@ -1048,7 +1048,7 @@ static VALUE sd_set_string_nullterm(VALUE self, VALUE sd_offset, VALUE sd_value,
   call-seq:
       set_string(offset, value, null_terminated = false) -> value
 
-  Copies the string value into the buffer at the offset supplied.
+  Copies the string value into the block at the offset supplied.
 
   If null_terminated is true, it will always write a null-terminating character
   if it fits. This means that you need at least string.bytesize + 1 bytes
@@ -1131,7 +1131,7 @@ static VALUE sd_memory_new(int argc, VALUE *argv, VALUE self)
   call-seq:
       malloc(size, alignment = nil) => Memory
 
-  Allocates a new buffer with the given size and alignment and returns it. If
+  Allocates a new block with the given size and alignment and returns it. If
   no alignment is specified, it defaults to Snow::Memory::SIZEOF_VOID_POINTER.
 
   Raises a RangeError if either size is zero or alignment is not a power of two.
@@ -1154,10 +1154,11 @@ static VALUE sd_memory_malloc(int argc, VALUE *argv, VALUE self)
     rb_raise(rb_eRangeError, "Alignment must be a power of two -- %zu is not a"
       " power of two", alignment);
   } else if (size < 1) {
-    rb_raise(rb_eRangeError, "Size of buffer must be 1 or more -- zero-byte"
-      " buffers are not permitted");
+    rb_raise(rb_eRangeError, "Size of block must be 1 or more -- zero-byte"
+      " blocks are not permitted");
   }
-  /* Allocate buffer */
+
+  /* Allocate block */
   data = com_malloc(size, alignment);
   memory  = Data_Wrap_Struct(self, 0, com_free, data);
 
@@ -1179,6 +1180,10 @@ static VALUE sd_memory_malloc(int argc, VALUE *argv, VALUE self)
   If a new alignment is specified, the memory will be reallocated regardless of
   whether the new and old sizes are the same. If no alignment is specified, the
   memory's previous alignment is used.
+
+  If the block for this memory was previously freed or the block is not owner by
+  this object, a new block is allocated and the memory takes ownership of it.
+  It is fine to realloc! on a previously freed block.
 
   Raises a RangeError if either size is zero or alignment is not a power of two.
  */
@@ -1218,8 +1223,8 @@ static VALUE sd_memory_realloc(int argc, VALUE *argv, VALUE self)
     rb_raise(rb_eRangeError, "Alignment must be a power of two -- %zu is not a"
       " power of two", alignment);
   } else if (size < 1) {
-    rb_raise(rb_eRangeError, "Size of buffer must be 1 or more -- zero-byte"
-      " buffers are not permitted");
+    rb_raise(rb_eRangeError, "Size of block must be 1 or more -- zero-byte"
+      " blocks are not permitted");
   }
 
   data      = RDATA(self);
