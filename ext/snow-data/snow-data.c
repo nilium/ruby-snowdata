@@ -13,6 +13,90 @@ static ID kSD_IVAR_ALIGNMENT;
 static ID kSD_ID_BYTESIZE;
 static ID kSD_ID_ADDRESS;
 
+#ifdef JRUBY_RUBY_H
+/*
+  Unfortunately, jruby doesn't provide a large number of these definitions,
+  including NUM2SIZET, SIZET2NUM, and a lot of the SIZEOF_* macros provided by
+  ruby/config.h. So, here we are.
+ */
+
+#ifndef SIZEOF_INT
+#if defined(_LP64) || defined(__LP64__) || defined(_LLP64) || defined(__LLP64__)
+#define SIZEOF_INT 8
+#else
+#define SIZEOF_INT 4
+#endif
+#endif
+
+#ifndef SIZEOF_SHORT
+#define SIZEOF_SHORT 2
+#endif
+
+#ifndef SIZEOF_FLOAT
+#define SIZEOF_FLOAT 4
+#endif /* SIZEOF_FLOAT */
+
+#ifndef SIZEOF_DOUBLE
+#define SIZEOF_DOUBLE 8
+#endif /* SIZEOF_DOUBLE */
+
+#ifndef SIZEOF_SIZE_T
+#define SIZEOF_SIZE_T SIZEOF_VOIDP
+#endif /* SIZEOF_SIZE_T */
+
+#ifndef SIZEOF_PTRDIFF_T
+#define SIZEOF_PTRDIFF_T SIZEOF_VOIDP
+#endif /* SIZEOF_PTRDIFF_T */
+
+#ifndef SIZEOF_INT8_T
+#define SIZEOF_INT8_T 1
+#endif /* SIZEOF_INT8_T */
+
+#ifndef SIZEOF_UINT8_T
+#define SIZEOF_UINT8_T 1
+#endif /* SIZEOF_UINT8_T */
+
+#ifndef SIZEOF_INT16_T
+#define SIZEOF_INT16_T 2
+#endif /* SIZEOF_INT16_T */
+
+#ifndef SIZEOF_UINT16_T
+#define SIZEOF_UINT16_T 2
+#endif /* SIZEOF_UINT16_T */
+
+#ifndef SIZEOF_INT32_T
+#define SIZEOF_INT32_T 4
+#endif /* SIZEOF_INT32_T */
+
+#ifndef SIZEOF_UINT32_T
+#define SIZEOF_UINT32_T 4
+#endif /* SIZEOF_UINT32_T */
+
+#ifndef SIZEOF_INT64_T
+#define SIZEOF_INT64_T 8
+#endif /* SIZEOF_INT64_T */
+
+#ifndef SIZEOF_UINT64_T
+#define SIZEOF_UINT64_T 8
+#endif /* SIZEOF_UINT64_T */
+
+#ifndef SIZEOF_INTPTR_T
+#define SIZEOF_INTPTR_T SIZEOF_VOIDP
+#endif /* SIZEOF_INTPTR_T */
+
+#ifndef SIZEOF_UINTPTR_T
+#define SIZEOF_UINTPTR_T SIZEOF_VOIDP
+#endif /* SIZEOF_UINTPTR_T */
+
+#ifndef NUM2SIZET
+#define NUM2SIZET(X)                      ((size_t)NUM2ULL(X))
+#endif
+
+#ifndef SIZET2NUM
+#define SIZET2NUM(X)                      ULL2NUM((unsigned long long)(X))
+#endif
+#endif
+
 #define SD_INT8_TO_NUM(X)                 INT2FIX(X)
 #define SD_INT16_TO_NUM(X)                INT2FIX(X)
 #define SD_INT32_TO_NUM(X)                INT2FIX(X)
