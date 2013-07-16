@@ -125,7 +125,8 @@ static ID kSD_ID_ADDRESS;
 #define SD_NUM_TO_UNSIGNED_CHAR(X)        ((unsigned char)NUM2UINT(X))
 #define SD_NUM_TO_SIGNED_CHAR(X)          ((signed char)FIX2INT(X))
 
-static void sd_check_null_block(VALUE self) {
+static void sd_check_null_block(VALUE self)
+{
   if (DATA_PTR(self) == NULL) {
     rb_raise(rb_eRuntimeError, "Pointer is NULL");
   }
