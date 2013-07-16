@@ -1077,7 +1077,7 @@ static VALUE sd_memory_new(int argc, VALUE *argv, VALUE self)
   size_t size;
   size_t alignment;
 
-  rb_scan_args(argc, argv, "12", &sd_address, &sd_size, &sd_alignment);
+  rb_scan_args(argc, argv, "21", &sd_address, &sd_size, &sd_alignment);
 
   address = (void *)SD_NUM_TO_INTPTR_T(sd_address);
   size = 0;
@@ -1085,6 +1085,12 @@ static VALUE sd_memory_new(int argc, VALUE *argv, VALUE self)
 
   if (RTEST(sd_size)) {
     size = NUM2SIZET(sd_size);
+  } else {
+    rb_raise(rb_eArgError, "Block size is false or nil");
+  }
+
+  if (!size) {
+    rb_raise(rb_eArgError, "Block size must be 1 or greater");
   }
 
   if (RTEST(sd_alignment)) {
