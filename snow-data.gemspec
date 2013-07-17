@@ -8,8 +8,13 @@ Gem::Specification.new { |s|
   s.name        = 'snow-data'
   s.version     = Snow::SNOW_DATA_VERSION
   s.date        = '2013-07-13'
-  s.summary     = 'Snow Data Structs'
-  s.description = 'Gem for building C structs in Ruby'
+  s.summary     = "Snow-Data: for working with memory like you've got nothing to lose."
+  s.description = <<-EOS
+Snow-Data is a gem for allocating memory and working with existing blocks of
+memory in a moderately safe but still technically really, really unsafe way. It
+also provides functionality for defining C-struct classes, including those with
+other structs as members.
+  EOS
   s.authors     = [ 'Noel Raymond Cower' ]
   s.email       = 'ncower@gmail.com'
   s.files       = Dir.glob('lib/**/*.rb') +
