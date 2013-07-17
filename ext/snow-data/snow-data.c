@@ -59,10 +59,10 @@ static ID kSD_ID_ADDRESS;
 
 #if SIZEOF_PTRDIFF_T <= SIZEOF_INT
 #define SD_PTRDIFF_T_TO_NUM(X)            INT2FIX(X)
-#define SD_NUM_TO_PTRDIFF_T(X)            ((ptrdiff_t)FIX2INT(X))
+#define SD_NUM_TO_PTRDIFF_T(X)            ((ptrdiff_t)NUM2INT(X))
 #elif SIZEOF_PTRDIFF_T == SIZEOF_LONG
 #define SD_PTRDIFF_T_TO_NUM(X)            LONG2FIX(X)
-#define SD_NUM_TO_PTRDIFF_T(X)            ((ptrdiff_t)FIX2LONG(X))
+#define SD_NUM_TO_PTRDIFF_T(X)            ((ptrdiff_t)NUM2LONG(X))
 #elif SIZEOF_PTRDIFF_T == SIZEOF_LONG_LONG
 #define SD_PTRDIFF_T_TO_NUM(X)            LL2NUM(X)
 #define SD_NUM_TO_PTRDIFF_T(X)            ((ptrdiff_t)NUM2LL(X))
@@ -72,10 +72,10 @@ static ID kSD_ID_ADDRESS;
 
 #if SIZEOF_INTPTR_T <= SIZEOF_INT
 #define SD_INTPTR_T_TO_NUM(X)             INT2FIX(X)
-#define SD_NUM_TO_INTPTR_T(X)             ((intptr_t)FIX2INT(X))
+#define SD_NUM_TO_INTPTR_T(X)             ((intptr_t)NUM2INT(X))
 #elif SIZEOF_INTPTR_T == SIZEOF_LONG
 #define SD_INTPTR_T_TO_NUM(X)             LONG2FIX(X)
-#define SD_NUM_TO_INTPTR_T(X)             ((intptr_t)FIX2LONG(X))
+#define SD_NUM_TO_INTPTR_T(X)             ((intptr_t)NUM2LONG(X))
 #elif SIZEOF_INTPTR_T == SIZEOF_LONG_LONG
 #define SD_INTPTR_T_TO_NUM(X)             LL2NUM(X)
 #define SD_NUM_TO_INTPTR_T(X)             ((intptr_t)NUM2LL(X))
@@ -86,10 +86,10 @@ static ID kSD_ID_ADDRESS;
 
 #if SIZEOF_UINTPTR_T <= SIZEOF_INT
 #define SD_UINTPTR_T_TO_NUM(X)            INT2FIX(X)
-#define SD_NUM_TO_UINTPTR_T(X)            ((uintptr_t)FIX2INT(X))
+#define SD_NUM_TO_UINTPTR_T(X)            ((uintptr_t)NUM2INT(X))
 #elif SIZEOF_UINTPTR_T == SIZEOF_LONG
 #define SD_UINTPTR_T_TO_NUM(X)            LONG2FIX(X)
-#define SD_NUM_TO_UINTPTR_T(X)            ((uintptr_t)FIX2LONG(X))
+#define SD_NUM_TO_UINTPTR_T(X)            ((uintptr_t)NUM2LONG(X))
 #elif SIZEOF_UINTPTR_T == SIZEOF_LONG_LONG
 #define SD_UINTPTR_T_TO_NUM(X)            LL2NUM(X)
 #define SD_NUM_TO_UINTPTR_T(X)            ((uintptr_t)NUM2LL(X))
@@ -111,19 +111,19 @@ static ID kSD_ID_ADDRESS;
 #define SD_UNSIGNED_CHAR_TO_NUM(X)        UINT2NUM(X)
 #define SD_SIGNED_CHAR_TO_NUM(X)          INT2FIX(X)
 
-#define SD_NUM_TO_LONG(X)                 ((long)FIX2LONG(X))
+#define SD_NUM_TO_LONG(X)                 ((long)NUM2LONG(X))
 #define SD_NUM_TO_LONG_LONG(X)            ((long long)NUM2LL(X))
 #define SD_NUM_TO_UNSIGNED_LONG(X)        ((unsigned long)NUM2ULONG(X))
 #define SD_NUM_TO_UNSIGNED_LONG_LONG(X)   ((unsigned long long)NUM2ULL(X))
 #define SD_NUM_TO_FLOAT(X)                ((float)rb_num2dbl(X))
 #define SD_NUM_TO_DOUBLE(X)               ((double)rb_num2dbl(X))
-#define SD_NUM_TO_INT(X)                  ((int)FIX2INT(X))
+#define SD_NUM_TO_INT(X)                  ((int)NUM2INT(X))
 #define SD_NUM_TO_UNSIGNED_INT(X)         ((unsigned int)NUM2UINT(X))
-#define SD_NUM_TO_SHORT(X)                ((short)FIX2INT(X))
+#define SD_NUM_TO_SHORT(X)                ((short)NUM2INT(X))
 #define SD_NUM_TO_UNSIGNED_SHORT(X)       ((unsigned short)NUM2UINT(X))
 #define SD_NUM_TO_CHAR(X)                 ((char)NUM2CHR(X))
 #define SD_NUM_TO_UNSIGNED_CHAR(X)        ((unsigned char)NUM2UINT(X))
-#define SD_NUM_TO_SIGNED_CHAR(X)          ((signed char)FIX2INT(X))
+#define SD_NUM_TO_SIGNED_CHAR(X)          ((signed char)NUM2INT(X))
 
 static void sd_check_null_block(VALUE self)
 {
