@@ -534,7 +534,7 @@ class CStruct
       const_set(:MEMBERS_HASH,  members.reduce({}) { |offs, member| offs[member.name] = member ; offs })
 
       def self.new(&block)
-        inst = malloc(self::SIZE, self::ALIGNMENT)
+        inst = __malloc__(self::SIZE, self::ALIGNMENT)
         yield(inst) if block_given?
         inst
       end
@@ -597,7 +597,7 @@ class CStruct
         def self.new(length) # :nodoc:
           length = length.to_i
           raise ArgumentError, "Length must be greater than zero" if length < 1
-          inst = malloc(length * self::BASE::SIZE, self::BASE::ALIGNMENT)
+          inst = __malloc__(length * self::BASE::SIZE, self::BASE::ALIGNMENT)
           inst.instance_variable_set(:@length, length)
           inst.instance_variable_set(:@__cache__, nil)
           inst

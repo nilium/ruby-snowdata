@@ -76,7 +76,7 @@ class Snow::Memory
   # copies the receiver's data to the new block; and returns the new block.
   #
   def dup
-    new_self = self.class.malloc(self.bytesize, self.alignment)
+    new_self = self.class.__malloc__(self.bytesize, self.alignment)
     new_self.copy!(self, 0, 0, self.bytesize)
   end
 
