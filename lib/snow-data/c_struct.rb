@@ -658,7 +658,7 @@ class CStruct
           raise RuntimeError, "Attempt to access deallocated array" if @length == 0
           raise TypeError, "Invalid value type, must be Data, but got #{data.class}" if ! data.kind_of?(Data)
           raise RangeError, "Attempt to access out-of-bounds index in #{self.class}" if index < 0 || @length <= index
-          @cache[index].copy!(data)
+          @__cache__[index].copy!(data)
           data
         end
         alias_method :[]=, :store
