@@ -132,6 +132,19 @@ static void sd_check_null_block(VALUE self)
   }
 }
 
+static void sd_check_block_bounds(size_t block_size, size_t offset, size_t size)
+{
+  if (offset >= block_size) {
+    rb_raise(rb_eRangeError,
+      "Offset %zu is out of bounds for block with size %zu",
+      offset, block_size);
+  } else if (offset + size > block_size || offset + size < offset) {
+    rb_raise(rb_eRangeError,
+      "Offset(%zu) + size(%zu) is out of bounds for block with size %zu",
+      offset, size, block_size);
+  }
+}
+
 /*
   Returns 1 if size is a power of two and nonzero, otherwise returns 0.
  */
