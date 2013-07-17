@@ -371,7 +371,7 @@ class CStruct
         raise "Invalid value type, must be Data, but got #{data.class}" if ! data.kind_of?(Data)
         local_addr = self.address + offset
         if !data.respond_to?(:address) || local_addr != data.address
-          copy!(data)
+          copy!(data, offset, 0, klass::SIZE)
         end
 
         data
