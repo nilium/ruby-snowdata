@@ -17,6 +17,15 @@ module Snow ; end
 # allocator. Only a block allocated by ::malloc will be freed by a Memory
 # object, either by calling #free! or when the GC collects the object.
 #
+# When subclassing Memory, which is fine to do, you'll likely want to override
+# Memory::new and possibly Memory::wrap. It is also possible to override
+# Memory::malloc, but it's recommended you never do this. If you do, keep in
+# mind that __malloc__ exists as an alias of malloc and you must never try to
+# override it, as this could result in very strange behavior. Similarly, new is
+# aliased as both wrap and __wrap__, the latter of which you should must never
+# override either. Again, it may result in undesirable behavior, crashes, and
+# angry responses to any issues you create on GitHub as a result.
+#
 class Snow::Memory
 
   class <<self
