@@ -1709,7 +1709,8 @@ sd_memory_copy_skip_data_check: /* skip from address check */
       to_s(null_terminated = true) => String
 
   Gets a string representation of the contents of this block. If null_terminated
-  is true, the returned string will end before the first null character.
+  is true (or nil), the returned string will end before the first null
+  character.
  */
 static VALUE sd_memory_to_s(int argc, VALUE *argv, VALUE self)
 {
