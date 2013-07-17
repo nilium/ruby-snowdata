@@ -1392,7 +1392,7 @@ sd_memory_copy_skip_data_check: /* skip from address check */
   destination_offset  = RTEST(sd_destination_offset) ? NUM2SIZET(sd_destination_offset) : 0;
   destination_pointer = (uint8_t *)self_data->data + destination_offset;
   self_byte_size      = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
-  source_pointer      += destination_offset;
+  source_pointer      += source_offset;
 
   if (self_byte_size == 0) {
     /*
