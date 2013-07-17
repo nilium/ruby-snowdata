@@ -19,6 +19,89 @@ to talk to people. Ok, it can't help you with that.
 _ALLONS-Y!_
 
 
+Example
+-------
+
+For those wanting a quick-ish example of using snow-data, I'll include one here
+showing you how you might define a few structs, including a Vec3, Vec2, Color,
+and Vertex and working with those.
+
+Bear in mind that, down the road, it will also be possible to assign snow-math
+types to these as well (provided they use the same underlying types), though I
+wouldn't use this for defining data types for anything other than transit to
+another API that expects its data in a format like this.
+
+How you use it, ultimately, is really up to you.
+
+    #!/usr/bin/env ruby -w
+
+    require 'snow-data'
+
+    # Defines a struct { float x, y, z; } and a struct { float x, y; }, essentially,
+    # all of whose members are 4-byte aligned (this is the default for floats, but
+    # it helps to illustrate that you can specify alignment).
+    Vec3   = Snow::CStruct[:Vec3, 'x: float :4; y: float :4; z: float :4']
+    Vec2   = Snow::CStruct[:Vec2, 'x: float :4; y: float :4']
+    # ui8 is shorthand for uint8_t -- you can write either, and the documentation
+    # for CStruct::new explains the short- and long-form names for each primitive
+    # type provided by Snow-Data. Further, CStructs defined with a name, as with
+    # Vec3, Vec2, and Color, have getters and setters defined in the Memory class
+    # and are usable as member types, as I'll show below.
+    Color  = Snow::CStruct[:Color, 'r: ui8; g: ui8; b: ui8; a: ui8']
+
+    # Define a vertex type whose members are all also 4-byte aligned. The vertex
+    # itself has a position, a normal, two texcoords (e.g., diffuse and lightmap),
+    # and a color value. Because we've not given Vertex a name (no :Vertex argument
+    # to CStruct), it isn't usable as a type for struct members.
+    Vertex = Snow::CStruct[<<END_TYPE]
+      position: Vec3      : 4
+      normal:   Vec3      : 4
+      texcoord: Vec2[2]   : 4
+      color:    Color     : 4
+    END_TYPE
+
+    # So let's create a vertex.
+    a_vertex = Vertex.new { |v|
+      v.position = Vec3.new { |p| p.x = 1; p.y = 2; p.z = 3 }
+      v.normal   = Vec3.new { |n| n.x = 0.707107; n.y = 0; n.z = 0.707107 }
+      # For array types, we must use set_* functions, as the name= shorthand for
+      # struct members only assigns to the first element of an array.
+      v.texcoord = Vec2.new { |t| t.x = 1.0; t.y = 1.0 }
+      # Though if you're masochistic you could also do this:
+      v.__send__(:texcoord=, Vec2.new { |t| t.x = 0.5; t.y = 0.5 }, 1)
+      v.color    = Color.new { |c| c.r = 255; c.g = 127; c.b = 63; c.a = 220 }
+    }
+
+    puts <<VERTEX_DESCRIPTION
+    Our vertex has the following properties:
+      Position: #{a_vertex.position.to_h}
+      Normal:   #{a_vertex.normal.to_h}
+      Texcoords: [
+        #{a_vertex.texcoord(0).to_h}
+        #{a_vertex.texcoord(1).to_h}
+      ]
+      Color:    #{a_vertex.color.to_h}
+
+    VERTEX_DESCRIPTION
+
+    # For kicks, let's create an array.
+    some_vertices = Vertex[64]
+
+    # And set all vertices to the above vertex.
+    some_vertices.map! { a_vertex }
+
+    puts <<VERTEX_DESCRIPTION
+    Our vertex in the array at index 36 has the following properties:
+      Position: #{some_vertices[36].position.to_h}
+      Normal:   #{some_vertices[36].normal.to_h}
+      Texcoords: [
+        #{some_vertices[36].texcoord(0).to_h}
+        #{some_vertices[36].texcoord(1).to_h}
+      ]
+      Color:    #{some_vertices[36].color.to_h}
+    VERTEX_DESCRIPTION
+
+
 License
 -------
 
