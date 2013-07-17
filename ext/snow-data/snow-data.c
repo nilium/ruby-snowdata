@@ -218,9 +218,11 @@ static VALUE sd_get_int8(VALUE self, VALUE sd_offset)
   typedef int8_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_INT8_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_INT8_TO_NUM(value);
 }
 
 /*
@@ -234,10 +236,12 @@ static VALUE sd_set_int8(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef int8_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_INT8(sd_value);
+  value = (conv_type_t)SD_NUM_TO_INT8(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -255,9 +259,11 @@ static VALUE sd_get_int16(VALUE self, VALUE sd_offset)
   typedef int16_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_INT16_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_INT16_TO_NUM(value);
 }
 
 /*
@@ -271,10 +277,12 @@ static VALUE sd_set_int16(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef int16_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_INT16(sd_value);
+  value = (conv_type_t)SD_NUM_TO_INT16(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -292,9 +300,11 @@ static VALUE sd_get_int32(VALUE self, VALUE sd_offset)
   typedef int32_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_INT32_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_INT32_TO_NUM(value);
 }
 
 /*
@@ -308,10 +318,12 @@ static VALUE sd_set_int32(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef int32_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_INT32(sd_value);
+  value = (conv_type_t)SD_NUM_TO_INT32(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -329,9 +341,11 @@ static VALUE sd_get_int64(VALUE self, VALUE sd_offset)
   typedef int64_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_INT64_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_INT64_TO_NUM(value);
 }
 
 /*
@@ -345,10 +359,12 @@ static VALUE sd_set_int64(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef int64_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_INT64(sd_value);
+  value = (conv_type_t)SD_NUM_TO_INT64(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -366,9 +382,11 @@ static VALUE sd_get_uint8(VALUE self, VALUE sd_offset)
   typedef uint8_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_UINT8_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_UINT8_TO_NUM(value);
 }
 
 /*
@@ -382,10 +400,12 @@ static VALUE sd_set_uint8(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef uint8_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_UINT8(sd_value);
+  value = (conv_type_t)SD_NUM_TO_UINT8(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -403,9 +423,11 @@ static VALUE sd_get_uint16(VALUE self, VALUE sd_offset)
   typedef uint16_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_UINT16_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_UINT16_TO_NUM(value);
 }
 
 /*
@@ -419,10 +441,12 @@ static VALUE sd_set_uint16(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef uint16_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_UINT16(sd_value);
+  value = (conv_type_t)SD_NUM_TO_UINT16(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -440,9 +464,11 @@ static VALUE sd_get_uint32(VALUE self, VALUE sd_offset)
   typedef uint32_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_UINT32_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_UINT32_TO_NUM(value);
 }
 
 /*
@@ -456,10 +482,12 @@ static VALUE sd_set_uint32(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef uint32_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_UINT32(sd_value);
+  value = (conv_type_t)SD_NUM_TO_UINT32(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -477,9 +505,11 @@ static VALUE sd_get_uint64(VALUE self, VALUE sd_offset)
   typedef uint64_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_UINT64_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_UINT64_TO_NUM(value);
 }
 
 /*
@@ -493,10 +523,12 @@ static VALUE sd_set_uint64(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef uint64_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_UINT64(sd_value);
+  value = (conv_type_t)SD_NUM_TO_UINT64(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -514,9 +546,11 @@ static VALUE sd_get_size_t(VALUE self, VALUE sd_offset)
   typedef size_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_SIZE_T_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_SIZE_T_TO_NUM(value);
 }
 
 /*
@@ -530,10 +564,12 @@ static VALUE sd_set_size_t(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef size_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_SIZE_T(sd_value);
+  value = (conv_type_t)SD_NUM_TO_SIZE_T(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -551,9 +587,11 @@ static VALUE sd_get_ptrdiff_t(VALUE self, VALUE sd_offset)
   typedef ptrdiff_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_PTRDIFF_T_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_PTRDIFF_T_TO_NUM(value);
 }
 
 /*
@@ -567,10 +605,12 @@ static VALUE sd_set_ptrdiff_t(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef ptrdiff_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_PTRDIFF_T(sd_value);
+  value = (conv_type_t)SD_NUM_TO_PTRDIFF_T(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -588,9 +628,11 @@ static VALUE sd_get_intptr_t(VALUE self, VALUE sd_offset)
   typedef intptr_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_INTPTR_T_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_INTPTR_T_TO_NUM(value);
 }
 
 /*
@@ -604,10 +646,12 @@ static VALUE sd_set_intptr_t(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef intptr_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_INTPTR_T(sd_value);
+  value = (conv_type_t)SD_NUM_TO_INTPTR_T(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -625,9 +669,11 @@ static VALUE sd_get_uintptr_t(VALUE self, VALUE sd_offset)
   typedef uintptr_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_UINTPTR_T_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_UINTPTR_T_TO_NUM(value);
 }
 
 /*
@@ -641,10 +687,12 @@ static VALUE sd_set_uintptr_t(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef uintptr_t conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_UINTPTR_T(sd_value);
+  value = (conv_type_t)SD_NUM_TO_UINTPTR_T(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -662,9 +710,11 @@ static VALUE sd_get_long(VALUE self, VALUE sd_offset)
   typedef long conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_LONG_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_LONG_TO_NUM(value);
 }
 
 /*
@@ -678,10 +728,12 @@ static VALUE sd_set_long(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef long conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_LONG(sd_value);
+  value = (conv_type_t)SD_NUM_TO_LONG(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -699,9 +751,11 @@ static VALUE sd_get_long_long(VALUE self, VALUE sd_offset)
   typedef long long conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_LONG_LONG_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_LONG_LONG_TO_NUM(value);
 }
 
 /*
@@ -715,10 +769,12 @@ static VALUE sd_set_long_long(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef long long conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_LONG_LONG(sd_value);
+  value = (conv_type_t)SD_NUM_TO_LONG_LONG(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -736,9 +792,11 @@ static VALUE sd_get_unsigned_long(VALUE self, VALUE sd_offset)
   typedef unsigned long conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_UNSIGNED_LONG_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_UNSIGNED_LONG_TO_NUM(value);
 }
 
 /*
@@ -752,10 +810,12 @@ static VALUE sd_set_unsigned_long(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef unsigned long conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_UNSIGNED_LONG(sd_value);
+  value = (conv_type_t)SD_NUM_TO_UNSIGNED_LONG(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -773,9 +833,11 @@ static VALUE sd_get_unsigned_long_long(VALUE self, VALUE sd_offset)
   typedef unsigned long long conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_UNSIGNED_LONG_LONG_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_UNSIGNED_LONG_LONG_TO_NUM(value);
 }
 
 /*
@@ -789,10 +851,12 @@ static VALUE sd_set_unsigned_long_long(VALUE self, VALUE sd_offset, VALUE sd_val
   typedef unsigned long long conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_UNSIGNED_LONG_LONG(sd_value);
+  value = (conv_type_t)SD_NUM_TO_UNSIGNED_LONG_LONG(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -810,9 +874,11 @@ static VALUE sd_get_float(VALUE self, VALUE sd_offset)
   typedef float conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_FLOAT_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_FLOAT_TO_NUM(value);
 }
 
 /*
@@ -826,10 +892,12 @@ static VALUE sd_set_float(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef float conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_FLOAT(sd_value);
+  value = (conv_type_t)SD_NUM_TO_FLOAT(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -847,9 +915,11 @@ static VALUE sd_get_double(VALUE self, VALUE sd_offset)
   typedef double conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_DOUBLE_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_DOUBLE_TO_NUM(value);
 }
 
 /*
@@ -863,10 +933,12 @@ static VALUE sd_set_double(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef double conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_DOUBLE(sd_value);
+  value = (conv_type_t)SD_NUM_TO_DOUBLE(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -884,9 +956,11 @@ static VALUE sd_get_int(VALUE self, VALUE sd_offset)
   typedef int conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_INT_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_INT_TO_NUM(value);
 }
 
 /*
@@ -900,10 +974,12 @@ static VALUE sd_set_int(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef int conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_INT(sd_value);
+  value = (conv_type_t)SD_NUM_TO_INT(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -921,9 +997,11 @@ static VALUE sd_get_unsigned_int(VALUE self, VALUE sd_offset)
   typedef unsigned int conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_UNSIGNED_INT_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_UNSIGNED_INT_TO_NUM(value);
 }
 
 /*
@@ -937,10 +1015,12 @@ static VALUE sd_set_unsigned_int(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef unsigned int conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_UNSIGNED_INT(sd_value);
+  value = (conv_type_t)SD_NUM_TO_UNSIGNED_INT(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -958,9 +1038,11 @@ static VALUE sd_get_short(VALUE self, VALUE sd_offset)
   typedef short conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_SHORT_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_SHORT_TO_NUM(value);
 }
 
 /*
@@ -974,10 +1056,12 @@ static VALUE sd_set_short(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef short conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_SHORT(sd_value);
+  value = (conv_type_t)SD_NUM_TO_SHORT(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -995,9 +1079,11 @@ static VALUE sd_get_unsigned_short(VALUE self, VALUE sd_offset)
   typedef unsigned short conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_UNSIGNED_SHORT_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_UNSIGNED_SHORT_TO_NUM(value);
 }
 
 /*
@@ -1011,10 +1097,12 @@ static VALUE sd_set_unsigned_short(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef unsigned short conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_UNSIGNED_SHORT(sd_value);
+  value = (conv_type_t)SD_NUM_TO_UNSIGNED_SHORT(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -1032,9 +1120,11 @@ static VALUE sd_get_char(VALUE self, VALUE sd_offset)
   typedef char conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_CHAR_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_CHAR_TO_NUM(value);
 }
 
 /*
@@ -1048,10 +1138,12 @@ static VALUE sd_set_char(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef char conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_CHAR(sd_value);
+  value = (conv_type_t)SD_NUM_TO_CHAR(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -1069,9 +1161,11 @@ static VALUE sd_get_unsigned_char(VALUE self, VALUE sd_offset)
   typedef unsigned char conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_UNSIGNED_CHAR_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_UNSIGNED_CHAR_TO_NUM(value);
 }
 
 /*
@@ -1085,10 +1179,12 @@ static VALUE sd_set_unsigned_char(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef unsigned char conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_UNSIGNED_CHAR(sd_value);
+  value = (conv_type_t)SD_NUM_TO_UNSIGNED_CHAR(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
@@ -1106,9 +1202,11 @@ static VALUE sd_get_signed_char(VALUE self, VALUE sd_offset)
   typedef signed char conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
-  return SD_SIGNED_CHAR_TO_NUM(*(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset));
+  value = *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset);
+  return SD_SIGNED_CHAR_TO_NUM(value);
 }
 
 /*
@@ -1122,10 +1220,12 @@ static VALUE sd_set_signed_char(VALUE self, VALUE sd_offset, VALUE sd_value)
   typedef signed char conv_type_t;
   const size_t block_size = NUM2SIZET(rb_ivar_get(self, kSD_IVAR_BYTESIZE));
   const size_t offset = NUM2SIZET(sd_offset);
+  conv_type_t value;
   sd_check_block_bounds(block_size, offset, sizeof(conv_type_t));
   sd_check_null_block(self);
   rb_check_frozen(self);
-  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = (conv_type_t)SD_NUM_TO_SIGNED_CHAR(sd_value);
+  value = (conv_type_t)SD_NUM_TO_SIGNED_CHAR(sd_value);
+  *(conv_type_t *)(((uint8_t *)RDATA(self)->data) + offset) = value;
   return sd_value;
 }
 
