@@ -9,10 +9,8 @@ Intro
 
 Snow-Data is a simple gem for dealing with memory and defining structs in a
 C-like way. Incidentally, it's also hideously unsafe, so everything is tainted
-by default because there's very little bounds-checking except on copy
-operations, and only for the destination (the source isn't because the source
-might be an arbitrary location, a data object, or something that does not
-respond to `bytesize`).
+by default. You'll thank me for this later, even if almost every operation does
+bounds-checking where possible to ensure you're not being a horrible person.
 
 For more information on usage, see the rdoc documentation for Snow::Memory
 and Snow::CStruct, as it explains the important things. Like CStructs. And how
