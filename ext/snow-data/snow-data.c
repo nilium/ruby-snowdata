@@ -8,6 +8,11 @@
 #include <stdint.h>
 #include <stdio.h>
 
+typedef enum e_sd_free_memory_flag {
+  SD_DO_NOT_FREE_MEMORY = 0,
+  SD_FREE_MEMORY        = 1
+} sd_free_memory_flag_t;
+
 static ID kSD_IVAR_BYTESIZE;
 static ID kSD_IVAR_ALIGNMENT;
 static ID kSD_ID_BYTESIZE;
@@ -1305,6 +1310,39 @@ static VALUE sd_set_string(int argc, VALUE *argv, VALUE self)
   rb_scan_args(argc, argv, "21", &sd_offset, &sd_value, &sd_null_terminated);
 
   return sd_set_string_nullterm(self, sd_offset, sd_value, !!RTEST(sd_null_terminated));
+}
+
+/*
+  Frees memory associated with self regardless of whether the object is frozen.
+ */
+static void sd_memory_force_free(VALUE self)
+{
+  struct RData *data = RDATA(self);
+
+  if (data->data && data->dfree) {
+    data->dfree(data->data);
+    data->dfree = 0;
+  } else if (!data->data) {
+    rb_raise(rb_eRuntimeError,
+      "Double-free on %s",
+      rb_obj_classname(self));
+  }
+
+  data->data = 0;
+  rb_ivar_set(self, kSD_IVAR_BYTESIZE, INT2FIX(0));
+}
+
+/*
+  Returns a Data object wrapped with the given klass and the appropriate size
+  and alignment instance variables.
+ */
+static VALUE sd_wrap_memory(VALUE klass, void *data, size_t size, size_t alignment, sd_free_memory_flag_t should_free)
+{
+  VALUE memory = Data_Wrap_Struct(klass, 0, (should_free ? com_free : 0), data);
+  rb_ivar_set(memory, kSD_IVAR_BYTESIZE, SIZET2NUM(size));
+  rb_ivar_set(memory, kSD_IVAR_ALIGNMENT, SIZET2NUM(alignment));
+  rb_obj_call_init(memory, 0, 0);
+  return memory;
 }
 
 /*
