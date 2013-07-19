@@ -175,19 +175,32 @@ static void *align_ptr(void *ptr, size_t alignment)
 /*
   Allocated a block of memory of at least size bytes aligned to the given byte
   alignment.
+
+  Raises a NoMemoryError if it's not possible to allocate memory.
  */
 static void *com_malloc(size_t size, size_t alignment)
 {
   const size_t aligned_size = align_size(size + sizeof(void *), alignment);
   void *const ptr = xcalloc(aligned_size, 1);
-  void **const aligned_ptr = align_ptr((uint8_t *)ptr + sizeof(void *), alignment);
+  void **aligned_ptr;
+
+  if (!ptr) {
+    rb_raise(rb_eNoMemError,
+      "Failed to allocate %zu (req: %zu) bytes via malloc",
+      aligned_size, size);
+    return NULL;
+  }
+
+  aligned_ptr = align_ptr((uint8_t *)ptr + sizeof(void *), alignment);
   aligned_ptr[-1] = ptr;
+
   #ifdef SD_VERBOSE_MALLOC_LOG
   fprintf(stderr, "Allocated block %p with aligned size %zu (requested: %zu"
     " aligned to %zu bytes), returning aligned pointer %p with usable size %td\n",
     ptr, aligned_size, size, alignment, aligned_ptr,
     (uint8_t *)(ptr + aligned_size) - (uint8_t *)aligned_ptr);
   #endif
+
   return aligned_ptr;
 }
 
