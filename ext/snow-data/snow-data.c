@@ -1310,6 +1310,8 @@ static VALUE sd_set_string(int argc, VALUE *argv, VALUE self)
 /*
   call-seq:
       new(address, size, alignment = SIZEOF_VOID_POINTER) => Memory
+      wrap(address, size, alignment = SIZEOF_VOID_POINTER) => Memory
+      __wrap__(address, size, alignment = SIZEOF_VOID_POINTER) => Memory
 
   Creates a new Memory object that wraps an existing pointer. Alignment is
   optional and defaults to the size of a pointer (Memory::SIZEOF_VOID_POINTER).
@@ -1331,7 +1333,7 @@ static VALUE sd_set_string(int argc, VALUE *argv, VALUE self)
   an ArgumentError to provide a NULL (zero) address.
 
   If a subclass overrides ::new, it is also aliased as ::wrap and ::__wrap__.
-  Subclasses may override ::wrap but must not override ::__wrap__.
+  Subclasses may override ::wrap or ::new but must never override ::__wrap__.
  */
 static VALUE sd_memory_new(int argc, VALUE *argv, VALUE self)
 {
