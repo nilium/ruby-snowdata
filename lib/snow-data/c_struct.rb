@@ -568,24 +568,7 @@ class CStruct
   def self.new(klass_name = nil, encoding)
     klass_name = klass_name.intern if klass_name
 
-    members = []
-
-    encoding.scan(ENCODING_REGEX) do
-      |match|
-      name   = match[0].intern
-      type   = match[1].intern
-      type = LONG_NAMES[type] if LONG_NAMES.include?(type)
-      length = (match[3] || 1).to_i
-      align  = (match[5] || ALIGNMENTS[type] || 1).to_i
-      offset = 0
-
-      last_type = members.last
-      if last_type
-        offset += Memory.align_size(last_type.offset + last_type.size, align)
-      end
-
-      members << StructMemberInfo[name, type, SIZES[type] * length, length, align, offset]
-    end
+    members = decode_member_info(encoding)
 
     raise "No valid members found in encoding" if members.empty?
 
@@ -599,7 +582,24 @@ class CStruct
     klass
   end
 
-  def self.encoding_for_members(members)
+  def self.decode_member_info(encoding)
+    total_size = 0
+    encoding.scan(ENCODING_REGEX).map do
+      |match|
+      name        = match[0].intern
+      type        = match[1].intern
+      type        = LONG_NAMES[type] if LONG_NAMES.include?(type)
+      length      = (match[3] || 1).to_i
+      align       = (match[5] || ALIGNMENTS[type] || 1).to_i
+      size        = SIZES[type] * length
+      offset      = Memory.align_size(total_size, align)
+      total_size  = offset + size
+
+      StructMemberInfo[name, type, size, length, align, offset]
+    end
+  end
+
+  def self.encode_member_info(members)
     members.map { |member|
       "#{member.name}:#{member.type}[#{member.length}]:#{member.alignment}"
     }.join(?;)
@@ -625,7 +625,7 @@ class CStruct
     alignment = members.map { |member| member.alignment }.max { |lhs, rhs| lhs <=> rhs }
     size = members.last.size + members.last.offset
     aligned_size = Memory.align_size(size, alignment)
-    encoding = encoding_for_members(members)
+    encoding = encode_member_info(members)
 
     Class.new(Memory) do |struct_klass|
       const_set(:ENCODING,      String.new(encoding).freeze)
