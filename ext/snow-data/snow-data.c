@@ -1455,6 +1455,77 @@ static VALUE sd_memory_malloc(int argc, VALUE *argv, VALUE self)
   return memory;
 }
 
+#ifdef SD_ALLOW_ALLOCA
+/*
+  call-seq:
+      alloca(size) { |memory| ... } => result of block
+      __alloca__(size) { |memory| ... } => result of block
+
+  Allocates size bytes on the stack and yields it to a block before for use,
+  then returns the result of the block. Outside of the block, any use of the
+  yielded memory's address is considered undefined behavior and may lead to
+  crashes or worse. The yielded memory is only valid for the duration of the
+  block. If you want to preserve the memory after use, either duplicate the
+  memory block or realloc! the memory, both of which will copy it from the stack
+  to the heap.
+
+  The alignment of the yielded memory is always the size of a pointer.
+
+  Because of how downright evil alloca is in some situations, it is disabled by
+  default. You must explicitly install snow-data with the --allow-alloca flag to
+  use this function. If you're not certain whether alloca is available for a
+  particular installation, then you should check if the Memory class responds to
+  it first.
+
+      if Snow::Memory.respond_to?(:__alloca__)
+        Snow::Memory.__alloca__(64) { |mem|
+          # ...
+        }
+      end
+
+  Subclasses may override alloca to provide a predefined size argument, but
+  subclasses must never override __alloca__. It is considered bad form to
+  implement __alloca__ using heap allocation for installations that don't
+  provide it.
+ */
+static VALUE sd_memory_alloca(VALUE self, VALUE sd_size)
+{
+  VALUE result = Qnil;
+  void *stack_memory = NULL;
+  struct RData *block_data;
+  size_t size = NUM2SIZET(sd_size);
+  VALUE block;
+
+  rb_need_block();
+
+  if (size == 0) {
+    rb_raise(rb_eRangeError, "Size of block must be 1 or more -- zero-byte"
+      " blocks are not permitted.");
+  }
+
+  stack_memory = alloca(size);
+  if (stack_memory == NULL) {
+    rb_raise(rb_eNoMemError,
+      "Failed to allocated %zu bytes via alloca",
+      size);
+  }
+
+  block = sd_wrap_memory(self, stack_memory, size, SIZEOF_VOIDP, SD_DO_NOT_FREE_MEMORY);
+  block_data = RDATA(block);
+  result = rb_yield(block);
+
+  /*
+    If the block hasn't been realloc!'d or freed, free it now if it hasn't been
+    frozen for some reason.
+   */
+  if (block_data->data == stack_memory && !block_data->dfree && !OBJ_FROZEN(block)) {
+    sd_memory_force_free(block);
+  }
+
+  return result;
+}
+#endif
+
 /*
   call-seq:
       realloc!(size, alignment = nil) => self
@@ -1850,6 +1921,9 @@ void Init_snowdata_bindings(void)
 
   rb_define_singleton_method(sd_memory_klass, "__wrap__", sd_memory_new, -1);
   rb_define_singleton_method(sd_memory_klass, "__malloc__", sd_memory_malloc, -1);
+  #ifdef SD_ALLOW_ALLOCA
+  rb_define_singleton_method(sd_memory_klass, "__alloca__", sd_memory_alloca, 1);
+  #endif
   rb_define_singleton_method(sd_memory_klass, "align_size", sd_align_size, -1);
   rb_define_method(sd_memory_klass, "realloc!", sd_memory_realloc, -1);
   rb_define_method(sd_memory_klass, "copy!", sd_memory_copy, -1);
