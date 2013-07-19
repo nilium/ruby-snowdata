@@ -111,6 +111,7 @@ class CStruct
     \s* (?: ; | $ | \n) # terminator
   }mx
 
+
   # Alignemnts for default types.
   ALIGNMENTS = {
     :char                 => 1,
@@ -140,6 +141,7 @@ class CStruct
     :uintptr_t            => Memory::SIZEOF_UINTPTR_T
   }
 
+
   # Sizes of default types.
   SIZES = {
     :char                 => 1,
@@ -168,6 +170,7 @@ class CStruct
     :intptr_t             => Memory::SIZEOF_INTPTR_T,
     :uintptr_t            => Memory::SIZEOF_UINTPTR_T
   }
+
 
   # Used for getters/setters on Memory objects. Simply maps short type names to
   # their long-form type names.
@@ -407,6 +410,7 @@ class CStruct
     }.join(?;)
   end
 
+
   #
   # call-seq:
   #   build_struct_type(members) => Class
@@ -449,6 +453,7 @@ class CStruct
 
   end
 
+
   #
   # :nodoc:
   # Generates an array class for the given struct class. This is called by
@@ -463,6 +468,7 @@ class CStruct
       include StructArrayBase
     end # Class.new
   end # build_array_type
+
 
   class <<self ; alias_method :[], :new ; end
 
