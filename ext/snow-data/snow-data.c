@@ -207,14 +207,22 @@ static void *com_malloc(size_t size, size_t alignment)
 /*
   Frees memory previously allocated by com_malloc. This _does not work_ if it
   was allocated by any other means.
+
+  Raises a RuntimeError if aligned_ptr is NULL.
  */
 static void com_free(void *aligned_ptr)
 {
+  if (!aligned_ptr) {
+    rb_raise(rb_eRuntimeError, "Attempt to call free on NULL");
+    return;
+  }
+
   #ifdef SD_VERBOSE_MALLOC_LOG
   fprintf(stderr, "Deallocating aligned pointer %p with underlying pointer %p\n",
     aligned_ptr,
     ((void **)aligned_ptr)[-1]);
   #endif
+
   xfree(((void **)aligned_ptr)[-1]);
 }
 
