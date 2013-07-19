@@ -1371,7 +1371,6 @@ static VALUE sd_memory_new(int argc, VALUE *argv, VALUE self)
   rb_ivar_set(memory, kSD_IVAR_BYTESIZE, SIZET2NUM(size));
   rb_ivar_set(memory, kSD_IVAR_ALIGNMENT, SIZET2NUM(alignment));
   rb_obj_call_init(memory, 0, 0);
-  rb_obj_taint(memory);
 
   return memory;
 }
@@ -1414,7 +1413,6 @@ static VALUE sd_memory_malloc(int argc, VALUE *argv, VALUE self)
   rb_ivar_set(memory, kSD_IVAR_BYTESIZE, SIZET2NUM(size));
   rb_ivar_set(memory, kSD_IVAR_ALIGNMENT, SIZET2NUM(alignment));
   rb_obj_call_init(memory, 0, 0);
-  rb_obj_taint(memory);
   return memory;
 }
 
