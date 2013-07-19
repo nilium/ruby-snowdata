@@ -431,23 +431,43 @@ class CStruct
     alignment = members.map { |member| member.alignment }.max { |lhs, rhs| lhs <=> rhs }
     size = members.last.size + members.last.offset
     aligned_size = Memory.align_size(size, alignment)
-    encoding = encode_member_info(members)
+    # Oddly enough, it would be easier to pass the encoding string into this
+    # function, but then it would ruin the nice little thing I have going where
+    # this function isn't dependent on parsing encodings, so we reproduce the
+    # encoding here as though it wasn't sitting just above us in the stack
+    # (which it might not be, but the chance of it is slim to none).
+    encoding = encode_member_info(members).freeze
 
     Class.new(Memory) do |struct_klass|
-      const_set(:ENCODING,      String.new(encoding).freeze)
+      # Set the class's constants, then include StructBase to define its members
+      # and other methods.
+      const_set(:ENCODING,      encoding)
       const_set(:MEMBERS,       members)
       const_set(:SIZE,          size)
       const_set(:ALIGNED_SIZE,  aligned_size)
       const_set(:ALIGNMENT,     alignment)
-      const_set(:MEMBERS_HASH,  members.reduce({}) { |hash, member| hash[member.name] = member ; hash })
-      const_set(:MEMBERS_GETFN, members.reduce({}) { |hash, member| hash[member.name] = :"get_#{member.name}" ; hash })
-      const_set(:MEMBERS_SETFN, members.reduce({}) { |hash, member| hash[member.name] = :"set_#{member.name}" ; hash })
+
+      const_set(:MEMBERS_HASH,  members.reduce({}) { |hash, member|
+        hash[member.name] = member
+        hash
+      })
+
+      const_set(:MEMBERS_GETFN, members.reduce({}) { |hash, member|
+        hash[member.name] = :"get_#{member.name}"
+        hash
+      })
+
+      const_set(:MEMBERS_SETFN, members.reduce({}) { |hash, member|
+        hash[member.name] = :"set_#{member.name}"
+        hash
+      })
+
 
       private :realloc!
 
       include StructBase
 
-      # Array inner class (not a subclass of StructBase because it has no members itself)
+      # Build and define the struct type's array class.
       const_set(:Array, CStruct.build_array_type(self))
     end
 
