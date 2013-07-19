@@ -7,7 +7,7 @@ require File.expand_path('../lib/snow-data/version.rb', __FILE__)
 Gem::Specification.new { |s|
   s.name        = 'snow-data'
   s.version     = Snow::SNOW_DATA_VERSION
-  s.date        = '2013-07-17'
+  s.date        = '2013-07-18'
   s.summary     = "Snow-Data: for working with memory like you've got nothing to lose."
   s.description = <<-EOS
 Snow-Data is a gem for allocating memory and working with existing blocks of
