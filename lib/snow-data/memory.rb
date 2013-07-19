@@ -28,11 +28,21 @@ module Snow ; end
 #
 class Snow::Memory
 
+  #
+  # Whether or not __alloca__ is available (and ergo any other variant of it).
+  # You may check this instead of calling respond_to? if you wish.
+  #
+  HAS_ALLOCA = self.respond_to?(:__alloca__)
+
   class <<self
     alias_method :new, :__wrap__
     alias_method :wrap, :__wrap__
     alias_method :malloc, :__malloc__
     alias_method :[], :__malloc__
+
+    if HAS_ALLOCA
+      alias_method :alloca, :__alloca__
+    end
   end
 
 
