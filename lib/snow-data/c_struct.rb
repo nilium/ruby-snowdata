@@ -64,6 +64,9 @@ class CStruct
 
 
   #
+  # call-seq:
+  #     member_encoding(name, type, length: 1, alignment: nil) => String
+  #
   # Returns an encoding for a struct member with the given name, type,
   # length, and alignment. The type must be a string or symbol, not a Class or
   # other object. If no alignment is provided, it uses the default alignment for
