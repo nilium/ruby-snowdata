@@ -369,6 +369,14 @@ class CStruct
     klass
   end
 
+
+  #
+  # Decodes an encoding string and returns an array of StructMemberInfo objects
+  # describing the members of a struct for the given encoding. You may then pass
+  # this array to build_struct_type to create a new struct class or
+  # encode_member_info to get an encoding string for the encoding string you
+  # just decoded, as though that were useful to you somehow.
+  #
   def self.decode_member_info(encoding)
     total_size = 0
     encoding.scan(ENCODING_REGEX).map do
