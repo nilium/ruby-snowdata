@@ -1407,10 +1407,7 @@ static VALUE sd_memory_new(int argc, VALUE *argv, VALUE self)
     alignment = NUM2SIZET(sd_alignment);
   }
 
-  memory = Data_Wrap_Struct(self, 0, 0, address);
-  rb_ivar_set(memory, kSD_IVAR_BYTESIZE, SIZET2NUM(size));
-  rb_ivar_set(memory, kSD_IVAR_ALIGNMENT, SIZET2NUM(alignment));
-  rb_obj_call_init(memory, 0, 0);
+  memory = sd_wrap_memory(self, address, size, alignment, SD_DO_NOT_FREE_MEMORY);
 
   return memory;
 }
