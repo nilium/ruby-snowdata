@@ -101,7 +101,7 @@ class CStruct
         self::MEMBERS_HASH[member].length
       end
 
-    end
+    end # module MemberInfoSupport
 
     #
     # Returns the address of a member. This address is only valid for the
