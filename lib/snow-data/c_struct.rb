@@ -19,10 +19,18 @@ class CStruct
   StructMemberInfo = Struct.new(:name, :type, :size, :length, :alignment, :offset)
 
 
+  #
+  # Whether long inspect strings are enabled. See both ::long_inspect= and
+  # ::long_inspect for accessors.
+  #
   @@long_inspect = false
 
+
   #
-  # Whether long inspect strings are enabled. By default, they are disabled.
+  # call-seq:
+  #     long_inspect = boolean => boolean
+  #
+  # Sets whether long inspect strings are enabled. By default, they are disabled.
   #
   # Long inspect strings can be useful for debugging, sepcially if you want to
   # see the value, length, and alignment of every struct member in inspect
@@ -33,6 +41,12 @@ class CStruct
   end
 
 
+  #
+  # call-seq:
+  #     long_inspect => boolean
+  #
+  # Returns whether long_inspect is enabled. By default, it is disabled.
+  #
   def self.long_inspect
     @@long_inspect
   end
