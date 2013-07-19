@@ -17,72 +17,74 @@ class CStruct
   StructMemberInfo = Struct.new(:name, :type, :size, :length, :alignment, :offset)
 
 
+  @@long_inspect = false
+
+  #
+  # Whether long inspect strings are enabled. By default, they are disabled.
+  #
+  # Long inspect strings can be useful for debugging, sepcially if you want to
+  # see the value, length, and alignment of every struct member in inspect
+  # strings. Otherwise, you can safely leave this disabled.
+  #
+  def self.long_inspect=(enabled)
+    @@long_inspect = !!enabled
+  end
+
+
+  def self.long_inspect
+    @@long_inspect
+  end
+
 
   #
   # Struct base class. Not to be used directly, as it does not provide all the
   # constants and methods necessary for a struct.
   #
-  class StructBase < ::Snow::Memory
+  module StructBase
 
-    @@long_inspect = false
 
-    #
-    # Whether long inspect strings are enabled. By default, they are disabled.
-    #
-    # Long inspect strings can be useful for debugging, sepcially if you want to
-    # see the value, length, and alignment of every struct member in inspect
-    # strings. Otherwise, you can safely leave this disabled.
-    #
-    def self.long_inspect=(enabled)
-      @@long_inspect = !!enabled
+    module MemberInfoSupport
+
+      #
+      # Returns the offset of a member.
+      #
+      def offset_of(member)
+        self::MEMBERS_HASH[member].offset
+      end
+
+
+      #
+      # Returns the type name of a member.
+      #
+      def type_of(member)
+        self::MEMBERS_HASH[member].type
+      end
+
+
+      #
+      # Returns the size in bytes of a member.
+      #
+      def bytesize_of(member)
+        self::MEMBERS_HASH[member].size
+      end
+
+
+      #
+      # Returns the alignment of a member.
+      #
+      def alignment_of(member)
+        self::MEMBERS_HASH[member].alignment
+      end
+
+
+      #
+      # Returns the length of a member.
+      #
+      def length_of(member)
+        self::MEMBERS_HASH[member].length
+      end
+
     end
-
-
-    def self.long_inspect
-      @@long_inspect
-    end
-
-
-    #
-    # Returns the offset of a member.
-    #
-    def self.offset_of(member)
-      self.MEMBERS_HASH[member].offset
-    end
-
-
-    #
-    # Returns the type name of a member.
-    #
-    def self.type_of(member)
-      self.MEMBERS_HASH[member].type
-    end
-
-
-    #
-    # Returns the size in bytes of a member.
-    #
-    def self.bytesize_of(member)
-      self.MEMBERS_HASH[member].size
-    end
-
-
-    #
-    # Returns the alignment of a member.
-    #
-    def self.alignment_of(member)
-      self.MEMBERS_HASH[member].alignment
-    end
-
-
-    #
-    # Returns the length of a member.
-    #
-    def self.length_of(member)
-      self.MEMBERS_HASH[member].length
-    end
-
-
 
     #
     # Returns the address of a member. This address is only valid for the
@@ -161,7 +163,7 @@ class CStruct
       id_text     = __id__.to_s(16).rjust(14, ?0)
       addr_text   = self.address.to_s(16).rjust(14, ?0)
 
-      member_text = if ! null? && self.class.long_inspect
+      member_text = if ! null? && CStruct.long_inspect
         # Get member text
         all_members_text = (self.class::MEMBERS.map do |member|
           name        = member.name
@@ -193,6 +195,81 @@ class CStruct
       "<#{ self.class }:0x#{ id_text } *0x#{ addr_text }:#{ self.bytesize }:#{ self.alignment }#{member_text}>"
     end
 
+
+    def self.define_member_methods(struct_klass)
+      struct_klass.class_exec do
+        self::MEMBERS.each do |member|
+
+          name        = member.name
+          index_range = (0...member.length)
+          type_name   = member.type
+          type_size   = CStruct::SIZES[member.type]
+          offset      = member.offset
+          getter      = :"get_#{type_name}"
+          setter      = :"set_#{type_name}"
+          get_name    = :"get_#{name}"
+          set_name    = :"set_#{name}"
+
+          define_method(get_name) do |index = 0|
+            if index === index_range
+              raise RangeError, "Index #{index} for #{name} is out of range: must be in #{index_range}"
+            end
+            off = offset + index * type_size
+            __send__(getter, off)
+          end # get_name
+
+
+          define_method(set_name) do |value, index = 0|
+            if index === index_range
+              raise RangeError, "Index #{index} for #{name} is out of range: must be in #{index_range}"
+            end
+            off = offset + index * type_size
+            __send__(setter, off, value)
+            value
+          end # set_name
+
+
+          alias_method :"#{name}", get_name
+          alias_method :"#{name}=", set_name
+
+          extend MemberInfoSupport
+
+        end # self::MEMBERS.each
+      end # self.class_exec
+    end # define_member_methods!
+
+
+    def self.included(struct_klass)
+      struct_klass.class_exec do
+
+        private :realloc!
+
+        def self.new(&block)
+          inst = __malloc__(self::SIZE, self::ALIGNMENT)
+          yield(inst) if block_given?
+          inst
+        end
+
+        def [](name, index = 0)
+          __send__(self.class::MEMBERS_GETFN[name], index)
+        end
+
+        def []=(name, index = 0, value)
+          __send__(self.class::MEMBERS_SETFN[name], value, index)
+        end
+
+        # Array inner class (not a subclass of StructBase because it has no members itself)
+        const_set(:Array, CStruct.build_array_type(struct_klass))
+
+        def self.[](length) # :nodoc:
+          self::Array.new(length)
+        end
+
+      end # struct_klass.class_exec
+
+      define_member_methods(struct_klass)
+
+    end # included
 
   end # class StructBase
 
@@ -488,14 +565,7 @@ class CStruct
   # `fetch(index)` and `store(index, value)` methods, both aliased to `[]` and
   # `[]=` respectively.
   #
-  def self.new(*args)
-    encoding, klass_name = case args.length
-    when 1 then args
-    when 2 then args.reverse
-    else
-      raise ArgumentError, "Invalid arguments to CStruct::new"
-    end
-
+  def self.new(klass_name = nil, encoding)
     klass_name = klass_name.intern if klass_name
 
     members = []
@@ -514,199 +584,12 @@ class CStruct
         offset += Memory.align_size(last_type.offset + last_type.size, align)
       end
 
-      members << StructMemberInfo[name, type, SIZES[type] * length, length, align, offset].freeze
+      members << StructMemberInfo[name, type, SIZES[type] * length, length, align, offset]
     end
 
     raise "No valid members found in encoding" if members.empty?
 
-    alignment = members.map { |member| member.alignment }.max { |lhs, rhs| lhs <=> rhs }
-    size = members.last.size + members.last.offset
-    aligned_size = Memory.align_size(size, alignment)
-
-    members.freeze
-
-    klass = Class.new(StructBase) do |struct_klass|
-      const_set(:ENCODING,      String.new(encoding).freeze)
-      const_set(:MEMBERS,       members)
-      const_set(:SIZE,          size)
-      const_set(:ALIGNED_SIZE,  aligned_size)
-      const_set(:ALIGNMENT,     alignment)
-      const_set(:MEMBERS_HASH,  members.reduce({}) { |offs, member| offs[member.name] = member ; offs })
-
-      def self.new(&block)
-        inst = __malloc__(self::SIZE, self::ALIGNMENT)
-        yield(inst) if block_given?
-        inst
-      end
-
-      self::MEMBERS.each do
-        |member|
-
-        name        = member.name
-        index_range = (0...member.length)
-        type_name   = member.type
-        type_size   = ::Snow::CStruct::SIZES[member.type]
-        offset      = member.offset
-        getter      = :"get_#{type_name}"
-        setter      = :"set_#{type_name}"
-        get_name    = :"get_#{name}"
-        set_name    = :"set_#{name}"
-
-        define_method(get_name) do |index = 0|
-          if index === index_range
-            raise RangeError, "Index #{index} for #{name} is out of range: must be in #{index_range}"
-          end
-          off = offset + index * type_size
-          __send__(getter, off)
-        end # get_name
-
-
-        define_method(set_name) do |value, index = 0|
-          if index === index_range
-            raise RangeError, "Index #{index} for #{name} is out of range: must be in #{index_range}"
-          end
-          off = offset + index * type_size
-          __send__(setter, off, value)
-          value
-        end # set_name
-
-
-        alias_method :"#{name}", get_name
-        alias_method :"#{name}=", set_name
-
-      end # define member get / set methods
-
-
-      # Array inner class (not a subclass of StructBase because it has no members itself)
-      const_set(:Array, Class.new(Memory) do |array_klass|
-
-        const_set(:BASE, struct_klass)
-
-        # The length of the array.
-        attr_reader :length
-
-
-        include Enumerable
-
-
-        def self.wrap(address, length_in_elements) # :nodoc:
-          __wrap__(address, length_in_elements * self::BASE::SIZE)
-        end
-
-
-        def self.new(length) # :nodoc:
-          length = length.to_i
-          raise ArgumentError, "Length must be greater than zero" if length < 1
-          inst = __malloc__(length * self::BASE::SIZE, self::BASE::ALIGNMENT)
-          inst.instance_variable_set(:@length, length)
-          inst.instance_variable_set(:@__cache__, nil)
-          inst
-        end
-
-
-        def resize!(new_length) # :nodoc:
-          raise ArgumentError, "Length must be greater than zero" if new_length < 1
-          realloc!(new_length * self.class::BASE::SIZE, self.class::BASE::ALIGNMENT)
-          @length = new_length
-          __free_cache__
-          self
-        end
-
-
-        def each(&block) # :nodoc:
-          return to_enum(:each) unless block_given?
-          (0 ... self.length).each { |index| yield fetch(index) }
-          self
-        end
-
-
-        def map(&block) # :nodoc:
-          return to_enum(:map) unless block_given?
-          self.dup.map!(&block)
-        end
-
-
-        def map!(&block) # :nodoc:
-          return to_enum(:map!) unless block_given?
-          (0 ... self.length).each { |index| store(index, yield(fetch(index))) }
-          self
-        end
-
-
-        def to_a # :nodoc:
-          (0 ... self.length).map { |index| fetch(index) }
-        end
-
-
-        def fetch(index) # :nodoc:
-          raise RuntimeError, "Attempt to access deallocated array" if @length == 0
-          raise RangeError, "Attempt to access out-of-bounds index in #{self.class}" if index < 0 || @length <= index
-          __build_cache__ if ! @__cache__
-          @__cache__[index]
-        end
-        alias_method :[], :fetch
-
-
-        #
-        # You can use this to assign _any_ Data subclass to an array value, but
-        # keep in mind that the data assigned MUST -- again, MUST -- be at least
-        # as large as the array's base struct type in bytes or the assigned
-        # data object MUST respond to a bytesize message to get its size in
-        # bytes.
-        #
-        def store(index, data) # :nodoc:
-          raise RuntimeError, "Attempt to access deallocated array" if @length == 0
-          raise TypeError, "Invalid value type, must be Data, but got #{data.class}" if ! data.kind_of?(Data)
-          raise RangeError, "Attempt to access out-of-bounds index in #{self.class}" if index < 0 || @length <= index
-          @__cache__[index].copy!(data)
-          data
-        end
-        alias_method :[]=, :store
-
-
-
-        def free! # :nodoc:
-          __free_cache__
-          @length = 0
-          super
-        end
-
-
-        private
-
-        def __free_cache__ # :nodoc:
-          if @__cache__
-            @__cache__.each { |entry|
-              entry.free!
-              entry.remove_instance_variable(:@__base_memory__)
-            } # zeroes address, making it NULL
-            @__cache__ = nil
-          end
-        end
-
-
-        def __build_cache__ # :nodoc:
-          addr = self.address
-          @__cache__ = (0...length).map { |index|
-            wrapper = self.class::BASE.__wrap__(addr + index * self.class::BASE::SIZE, self.class::BASE::SIZE)
-            # Make sure the wrapped object keeps the memory from being collected while it's in use
-            wrapper.instance_variable_set(:@__base_memory__, self)
-            wrapper
-          }
-        end
-
-
-        class <<self # :nodoc: all
-          alias_method :[], :new
-        end
-
-      end)
-
-      def self.[](length) # :nodoc:
-        self::Array.new(length)
-      end
-
-    end
+    klass = build_struct_type(members)
 
     if klass_name
       const_set(klass_name, klass)
@@ -715,6 +598,181 @@ class CStruct
 
     klass
   end
+
+  def self.encoding_for_members(members)
+    members.map { |member|
+      "#{member.name}:#{member.type}[#{member.length}]:#{member.alignment}"
+    }.join(?;)
+  end
+
+  #
+  # call-seq:
+  #   build_struct_type(members) => Class
+  #
+  # Builds a struct type for the given array of StructMemberInfo objects. The
+  # array of member objects must not be empty.
+  #
+  def self.build_struct_type(members)
+    raise ArgumentError, "Members array must not be empty" if members.empty?
+
+    # Make a copy of the members array so we can store a frozen version of it
+    # in the new struct class.
+    members = Marshal.load(Marshal.dump(members))
+    members.map! { |info| info.freeze }
+    members.freeze
+
+    # Get the alignment, size, aligned size, and encoding of the struct.
+    alignment = members.map { |member| member.alignment }.max { |lhs, rhs| lhs <=> rhs }
+    size = members.last.size + members.last.offset
+    aligned_size = Memory.align_size(size, alignment)
+    encoding = encoding_for_members(members)
+
+    Class.new(Memory) do |struct_klass|
+      const_set(:ENCODING,      String.new(encoding).freeze)
+      const_set(:MEMBERS,       members)
+      const_set(:SIZE,          size)
+      const_set(:ALIGNED_SIZE,  aligned_size)
+      const_set(:ALIGNMENT,     alignment)
+      const_set(:MEMBERS_HASH,  members.reduce({}) { |hash, member| hash[member.name] = member ; hash })
+      const_set(:MEMBERS_GETFN, members.reduce({}) { |hash, member| hash[member.name] = :"get_#{member.name}" ; hash })
+      const_set(:MEMBERS_SETFN, members.reduce({}) { |hash, member| hash[member.name] = :"set_#{member.name}" ; hash })
+
+      include StructBase
+    end
+
+  end
+
+  #
+  # :nodoc:
+  # Generates an array class for the given struct class. This is called by
+  # ::build_struct_type and so shouldn't be called manually.
+  #
+  def self.build_array_type(struct_klass)
+    Class.new(Memory) do |array_klass|
+      const_set(:BASE, struct_klass)
+
+      include Enumerable
+
+
+      # The length of the array.
+      attr_reader :length
+
+
+      def self.wrap(address, length_in_elements) # :nodoc:
+        __wrap__(address, length_in_elements * self::BASE::SIZE)
+      end
+
+
+      def self.new(length) # :nodoc:
+        length = length.to_i
+        raise ArgumentError, "Length must be greater than zero" if length < 1
+        inst = __malloc__(length * self::BASE::SIZE, self::BASE::ALIGNMENT)
+        inst.instance_variable_set(:@length, length)
+        inst.instance_variable_set(:@__cache__, nil)
+        inst
+      end
+
+
+      def resize!(new_length) # :nodoc:
+        raise ArgumentError, "Length must be greater than zero" if new_length < 1
+        realloc!(new_length * self.class::BASE::SIZE, self.class::BASE::ALIGNMENT)
+        @length = new_length
+        __free_cache__
+        self
+      end
+
+
+      def each(&block) # :nodoc:
+        return to_enum(:each) unless block_given?
+        (0 ... self.length).each { |index| yield fetch(index) }
+        self
+      end
+
+
+      def map(&block) # :nodoc:
+        return to_enum(:map) unless block_given?
+        self.dup.map!(&block)
+      end
+
+
+      def map!(&block) # :nodoc:
+        return to_enum(:map!) unless block_given?
+        (0 ... self.length).each { |index| store(index, yield(fetch(index))) }
+        self
+      end
+
+
+      def to_a # :nodoc:
+        (0 ... self.length).map { |index| fetch(index) }
+      end
+
+
+      def fetch(index) # :nodoc:
+        raise RuntimeError, "Attempt to access deallocated array" if @length == 0
+        raise RangeError, "Attempt to access out-of-bounds index in #{self.class}" if index < 0 || @length <= index
+        __build_cache__ if ! @__cache__
+        @__cache__[index]
+      end
+      alias_method :[], :fetch
+
+
+      #
+      # You can use this to assign _any_ Data subclass to an array value, but
+      # keep in mind that the data assigned MUST -- again, MUST -- be at least
+      # as large as the array's base struct type in bytes or the assigned
+      # data object MUST respond to a bytesize message to get its size in
+      # bytes.
+      #
+      def store(index, data) # :nodoc:
+        raise RuntimeError, "Attempt to access deallocated array" if @length == 0
+        raise TypeError, "Invalid value type, must be Data, but got #{data.class}" if ! data.kind_of?(Data)
+        raise RangeError, "Attempt to access out-of-bounds index in #{self.class}" if index < 0 || @length <= index
+        @__cache__[index].copy!(data)
+        data
+      end
+      alias_method :[]=, :store
+
+
+
+      def free! # :nodoc:
+        __free_cache__
+        @length = 0
+        super
+      end
+
+
+      private :realloc!
+      private
+
+      def __free_cache__ # :nodoc:
+        if @__cache__
+          @__cache__.each { |entry|
+            entry.free!
+            entry.remove_instance_variable(:@__base_memory__)
+          } # zeroes address, making it NULL
+          @__cache__ = nil
+        end
+      end
+
+
+      def __build_cache__ # :nodoc:
+        addr = self.address
+        @__cache__ = (0...length).map { |index|
+          wrapper = self.class::BASE.__wrap__(addr + index * self.class::BASE::SIZE, self.class::BASE::SIZE)
+          # Make sure the wrapped object keeps the memory from being collected while it's in use
+          wrapper.instance_variable_set(:@__base_memory__, self)
+          wrapper
+        }
+      end
+
+
+      class <<self # :nodoc: all
+        alias_method :[], :new
+      end
+
+    end # Class.new
+
+  end # build_array_type
 
   class <<self ; alias_method :[], :new ; end
 
