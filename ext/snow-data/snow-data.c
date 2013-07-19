@@ -1380,11 +1380,16 @@ static VALUE sd_memory_new(int argc, VALUE *argv, VALUE self)
 /*
   call-seq:
       malloc(size, alignment = nil) => Memory
+      __malloc__(size, alignment = nil) => Memory
 
   Allocates a new block with the given size and alignment and returns it. If
   no alignment is specified, it defaults to Snow::Memory::SIZEOF_VOID_POINTER.
 
   Raises a RangeError if either size is zero or alignment is not a power of two.
+
+  If a subclass overrides ::malloc, which is a bad idea and should not be done,
+  then it is aliased as ::__malloc__ as well. Subclasses must never override
+  ::__malloc__.
  */
 static VALUE sd_memory_malloc(int argc, VALUE *argv, VALUE self)
 {
