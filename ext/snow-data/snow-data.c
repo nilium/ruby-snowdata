@@ -1546,22 +1546,8 @@ static VALUE sd_memory_realloc(int argc, VALUE *argv, VALUE self)
  */
 static VALUE sd_memory_free(VALUE self)
 {
-  struct RData *data = RDATA(self);
-
   rb_check_frozen(self);
-
-  if (data->data && data->dfree) {
-    data->dfree(data->data);
-    data->dfree = 0;
-  } else if (!data->data) {
-    rb_raise(rb_eRuntimeError,
-      "Double-free on %s",
-      rb_obj_classname(self));
-  }
-
-  data->data = 0;
-  rb_ivar_set(self, kSD_IVAR_BYTESIZE, INT2FIX(0));
-
+  sd_memory_force_free(self);
   return self;
 }
 
