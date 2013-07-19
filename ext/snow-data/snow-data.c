@@ -1453,11 +1453,8 @@ static VALUE sd_memory_malloc(int argc, VALUE *argv, VALUE self)
 
   /* Allocate block */
   data = com_malloc(size, alignment);
-  memory  = Data_Wrap_Struct(self, 0, com_free, data);
+  memory = sd_wrap_memory(self, data, size, alignment, SD_FREE_MEMORY);
 
-  rb_ivar_set(memory, kSD_IVAR_BYTESIZE, SIZET2NUM(size));
-  rb_ivar_set(memory, kSD_IVAR_ALIGNMENT, SIZET2NUM(alignment));
-  rb_obj_call_init(memory, 0, 0);
   return memory;
 }
 
