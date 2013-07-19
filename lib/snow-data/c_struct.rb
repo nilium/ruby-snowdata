@@ -42,6 +42,23 @@ class CStruct
   #
   module StructBase
 
+    module Allocators
+
+      def new(&block)
+        inst = __malloc__(self::SIZE, self::ALIGNMENT)
+        yield(inst) if block_given?
+        inst
+      end
+
+      def wrap(address, alignment = self::ALIGNMENT)
+        __wrap__(address, self::SIZE, alignment)
+      end
+
+      def [](length) # :nodoc:
+        self::Array.new(length)
+      end
+
+    end # module Allocators
 
     module MemberInfoSupport
 
@@ -196,6 +213,22 @@ class CStruct
     end
 
 
+    #
+    # Gets the value of the member with the given name and index.
+    #
+    def [](name, index = 0)
+      __send__(self.class::MEMBERS_GETFN[name], index)
+    end
+
+
+    #
+    # Sets the value of the member with the given name and index.
+    #
+    def []=(name, index = 0, value)
+      __send__(self.class::MEMBERS_SETFN[name], value, index)
+    end
+
+
     def self.define_member_methods(struct_klass)
       struct_klass.class_exec do
         self::MEMBERS.each do |member|
@@ -239,36 +272,14 @@ class CStruct
     end # define_member_methods!
 
 
+    #
+    # Upon inclusion, defines the given struct_klass's member accessors/mutators
+    # as well as its allocator functions.
+    #
     def self.included(struct_klass)
-      struct_klass.class_exec do
-
-        private :realloc!
-
-        def self.new(&block)
-          inst = __malloc__(self::SIZE, self::ALIGNMENT)
-          yield(inst) if block_given?
-          inst
-        end
-
-        def [](name, index = 0)
-          __send__(self.class::MEMBERS_GETFN[name], index)
-        end
-
-        def []=(name, index = 0, value)
-          __send__(self.class::MEMBERS_SETFN[name], value, index)
-        end
-
-        # Array inner class (not a subclass of StructBase because it has no members itself)
-        const_set(:Array, CStruct.build_array_type(struct_klass))
-
-        def self.[](length) # :nodoc:
-          self::Array.new(length)
-        end
-
-      end # struct_klass.class_exec
-
+      struct_klass.extend(Allocators)
+      struct_klass.extend(MemberInfoSupport)
       define_member_methods(struct_klass)
-
     end # included
 
   end # module StructBase
@@ -767,7 +778,12 @@ class CStruct
       const_set(:MEMBERS_GETFN, members.reduce({}) { |hash, member| hash[member.name] = :"get_#{member.name}" ; hash })
       const_set(:MEMBERS_SETFN, members.reduce({}) { |hash, member| hash[member.name] = :"set_#{member.name}" ; hash })
 
+      private :realloc!
+
       include StructBase
+
+      # Array inner class (not a subclass of StructBase because it has no members itself)
+      const_set(:Array, CStruct.build_array_type(self))
     end
 
   end
