@@ -89,6 +89,9 @@ class CStruct
   #--
   # Ordinarily I'd write a lexer for this sort of thing, but regex actually
   # seems to work fine.
+  #
+  # TODO: At any rate, replace this with a lexer/parser. At least that way it'll
+  # be possible to provide validation for encodings.
   #++
   ENCODING_REGEX = %r{
       (?<name>                                      # 0
