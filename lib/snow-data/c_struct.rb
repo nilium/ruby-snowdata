@@ -394,6 +394,13 @@ class CStruct
     end
   end
 
+
+  #
+  # Given an array of StructMemberInfo objects, returns a valid encoding string
+  # for those objects in the order they're specified in the array. The info
+  # objects' offsets are ignored, as these cannot be specified using an encoding
+  # string.
+  #
   def self.encode_member_info(members)
     members.map { |member|
       "#{member.name}:#{member.type}[#{member.length}]:#{member.alignment}"
