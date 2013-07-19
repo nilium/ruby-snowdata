@@ -53,6 +53,9 @@ class CStruct
 
 
   #
+  # call-seq:
+  #     power_of_two?(num) => boolean
+  #
   # Returns whether num is a power of two and nonzero.
   #
   def self.power_of_two?(num)
