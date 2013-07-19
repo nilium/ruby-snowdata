@@ -1823,7 +1823,7 @@ void Init_snowdata_bindings(void)
   rb_const_set(sd_memory_klass, rb_intern("SIZEOF_UINTPTR_T"), SIZET2NUM(SIZEOF_UINTPTR_T));
   rb_const_set(sd_memory_klass, rb_intern("SIZEOF_VOID_POINTER"), SIZET2NUM(sizeof(void *)));
 
-  rb_define_singleton_method(sd_memory_klass, "new", sd_memory_new, -1);
+  rb_define_singleton_method(sd_memory_klass, "__wrap__", sd_memory_new, -1);
   rb_define_singleton_method(sd_memory_klass, "malloc", sd_memory_malloc, -1);
   rb_define_singleton_method(sd_memory_klass, "align_size", sd_align_size, -1);
   rb_define_method(sd_memory_klass, "realloc!", sd_memory_realloc, -1);

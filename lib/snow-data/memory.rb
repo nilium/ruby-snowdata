@@ -29,8 +29,8 @@ module Snow ; end
 class Snow::Memory
 
   class <<self
-    alias_method :wrap, :new
-    alias_method :__wrap__, :new
+    alias_method :new, :__wrap__
+    alias_method :wrap, :__wrap__
     alias_method :[], :malloc
     alias_method :__malloc__, :malloc
   end
