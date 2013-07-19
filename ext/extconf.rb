@@ -19,6 +19,7 @@ option_mappings = {
   '-Ws'                  => OptKVPair[:warn_implicit_size, true],
   '--warn-no-bytesize'   => OptKVPair[:warn_no_bytesize, true],
   '-Wbs'                 => OptKVPair[:warn_implicit_size, true],
+  '--allow-alloca'       => OptKVPair[:allow_alloca, true],
   '--debug-memory-copy'  => OptKVPair[:debug_memory_copy, true],
   '--debug-allocations'  => OptKVPair[:debug_allocations, true]
 }
@@ -27,6 +28,7 @@ options = {
   :build_debug        => false,
   :warn_implicit_size => false,
   :warn_no_bytesize   => false,
+  :allow_alloca       => false,
   :debug_memory_copy  => false,
   :debug_allocations  => false
 }
@@ -50,6 +52,7 @@ else
   $stdout.puts "Building extension in release mode"
 end
 
+$CFLAGS += ' -DSD_ALLOW_ALLOCA' if options[:allow_alloca]
 $CFLAGS += ' -DSD_SD_WARN_ON_IMPLICIT_COPY_SIZE' if options[:warn_implicit_size]
 $CFLAGS += ' -DSD_WARN_ON_NO_BYTESIZE_METHOD' if options[:warn_no_bytesize]
 $CFLAGS += ' -DSD_VERBOSE_COPY_LOG' if options[:debug_memory_copy]
