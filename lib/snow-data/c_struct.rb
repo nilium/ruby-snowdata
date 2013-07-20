@@ -415,8 +415,7 @@ class CStruct
     encoding.scan(ENCODING_REGEX).map do
       |match|
       name        = match[0].intern
-      type        = match[1].intern
-      type        = TYPE_ALIASES[type] if TYPE_ALIASES.include?(type)
+      type        = real_type_of(match[1].intern)
       length      = (match[3] || 1).to_i
       align       = (match[5] || ALIGNMENTS[type] || 1).to_i
       size        = SIZES[type] * length
