@@ -174,7 +174,7 @@ class CStruct
 
   # Used for getters/setters on Memory objects. Simply maps short type names to
   # their long-form type names.
-  LONG_NAMES = {
+  TYPE_ALIASES = {
     # char
     :c      => :char,
     :sc     => :signed_char,
@@ -386,7 +386,7 @@ class CStruct
       |match|
       name        = match[0].intern
       type        = match[1].intern
-      type        = LONG_NAMES[type] if LONG_NAMES.include?(type)
+      type        = TYPE_ALIASES[type] if TYPE_ALIASES.include?(type)
       length      = (match[3] || 1).to_i
       align       = (match[5] || ALIGNMENTS[type] || 1).to_i
       size        = SIZES[type] * length
