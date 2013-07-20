@@ -22,6 +22,13 @@ class Snow::CStruct::Builder
     instance_exec(&block) if block_given?
   end
 
+  #
+  # call-seq:
+  #     member_info => [StructMemberInfo]
+  #
+  # Returns the StructMemberInfo array for the builder. You should copy this if
+  # you need to modify it, and the same goes for its elements.
+  #
   def member_info
     @members
   end
