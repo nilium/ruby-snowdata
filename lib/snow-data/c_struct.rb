@@ -6,6 +6,7 @@ require 'snow-data/snowdata_bindings'
 require 'snow-data/memory'
 require 'snow-data/c_struct/struct_base'
 require 'snow-data/c_struct/array_base'
+require 'snow-data/c_struct/builder'
 
 module Snow
 
