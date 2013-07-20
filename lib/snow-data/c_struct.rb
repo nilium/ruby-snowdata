@@ -216,12 +216,12 @@ class CStruct
   # struct encodings.
   #
   def self.add_type(name, klass)
-    name = name.intern
-
     raise "No type name provided" if !name
 
+    name = name.intern
+
     ALIGNMENTS[name] = klass::ALIGNMENT
-    SIZES[name] = klass::SIZE
+    SIZES[name]      = klass::SIZE
 
     getter = :"get_#{name}"
     setter = :"set_#{name}"
