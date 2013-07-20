@@ -400,10 +400,30 @@ class CStruct
   # `fetch(index)` and `store(index, value)` methods, both aliased to `[]` and
   # `[]=` respectively.
   #
-  def self.new(klass_name = nil, encoding)
+  def self.new(*args, &block)
+    klass_name = nil
+    encoding = nil
+
+    case
+    when args.length == 0 && block_given?
+      ; #nop
+    when args.length == 1 && block_given?
+      klass_name = args[0]
+    when args.length == 1
+      encoding = args[0]
+    when args.length == 2 && !block_given?
+      klass_name, encoding = *args
+    else
+      raise ArgumentError, "wrong number of arguments (#{args.length} for 0..2)"
+    end
+
     klass_name = klass_name.intern if klass_name
 
-    members = decode_member_info(encoding)
+    members = if block_given?
+      Builder.new(&block).member_info
+    else
+      decode_member_info(encoding)
+    end
 
     raise "No valid members found in encoding" if members.empty?
 
