@@ -7,6 +7,15 @@ class Snow::CStruct::Builder
 
   @@defined_types = Set.new
 
+  #
+  # call-seq:
+  #     new => Builder
+  #     new { ... } => Builder
+  #
+  # In either form, a new Builder is allocated and returned. If a block is
+  # given, then it will be instance_exec'd, allowing you to easily call any
+  # declaration methods on the builder instance.
+  #
   def initialize(&block)
     @members = []
     @last_offset = 0
