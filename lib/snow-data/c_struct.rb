@@ -299,6 +299,8 @@ class CStruct
   # call-seq:
   #     new(name, encoding) => Class
   #     new(encoding) => Class
+  #     new(name) { ... } => Class
+  #     new { ... } => Class
   #
   # Creates a new C-struct class and returns it. Optionally, if a name is
   # provided, it is also added as a class under the CStruct class.
@@ -319,6 +321,10 @@ class CStruct
   # a member of another struct. To add it as a possible member type, you need to
   # call ::add_type(name, klass). This will not register it as a constant under
   # CStruct.
+  #
+  # If a block is given, a CStruct::Builder is allocated and the block is
+  # instance_exec'd for that builder. Encoding strings may not be passed if you
+  # opt to use a builder block in place of an encoding string.
   #
   #
   # ### Encodings
