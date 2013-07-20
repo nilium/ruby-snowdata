@@ -16,6 +16,8 @@ class CStruct
   # Info for a struct member. Defines a member's name, type, size, length,
   # alignment, and offset.
   #
+  # The type member of this may not be an alias of another type.
+  #
   StructMemberInfo = Struct.new(:name, :type, :size, :length, :alignment, :offset)
 
 
