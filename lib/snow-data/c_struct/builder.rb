@@ -33,6 +33,13 @@ class Snow::CStruct::Builder
     @members
   end
 
+  #
+  # call-seq:
+  #     flush_type_methods! => self
+  #
+  # Defines methods for declaring members of any recognized CStruct type,
+  # including aliases.
+  #
   def self.flush_type_methods!
     ::Snow::CStruct::SIZES.each do |type_name, type_size|
       next if @@defined_types.include?(type_name)
