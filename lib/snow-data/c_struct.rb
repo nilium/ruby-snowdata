@@ -217,6 +217,7 @@ class CStruct
   #
   def self.add_type(name, klass)
     raise "No type name provided" if !name
+    raise "Class must be a subclass of #{Memory}" unless Memory > klass
 
     name = name.intern
 
