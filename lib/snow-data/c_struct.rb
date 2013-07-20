@@ -252,7 +252,16 @@ class CStruct
   def self.add_type(name = nil, klass)
     raise "Class must be a subclass of #{Memory}" unless Memory > klass
 
-    name = (name || klass.name).to_sym
+    if ! name
+      name = klass.name
+      if (last_sro = name.rindex('::'))
+        name = name[last_sro + 2, name.length]
+      end
+    end
+
+    name = name.to_sym
+
+    raise "Type for #{name} is already defined" if SIZES.include?(name)
 
     ALIGNMENTS[name] = klass::ALIGNMENT
     SIZES[name]      = klass::SIZE
