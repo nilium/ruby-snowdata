@@ -249,11 +249,10 @@ class CStruct
   # can be used as a member type by using the name provided to #add_type in
   # struct encodings.
   #
-  def self.add_type(name, klass)
-    raise "No type name provided" if !name
+  def self.add_type(name = nil, klass)
     raise "Class must be a subclass of #{Memory}" unless Memory > klass
 
-    name = name.intern
+    name = (name || klass.name).to_sym
 
     ALIGNMENTS[name] = klass::ALIGNMENT
     SIZES[name]      = klass::SIZE
