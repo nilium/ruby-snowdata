@@ -53,36 +53,35 @@ How you use it, ultimately, is really up to you.
     # itself has a position, a normal, two texcoords (e.g., diffuse and lightmap),
     # and a color value. Because we've not given Vertex a name (no :Vertex argument
     # to CStruct), it isn't usable as a type for struct members.
-    Vertex = Snow::CStruct[<<END_TYPE]
-      position: Vec3      : 4
-      normal:   Vec3      : 4
-      texcoord: Vec2[2]   : 4
-      color:    Color     : 4
-    END_TYPE
+    Vertex = Snow::CStruct.new {
+      vec3  :position,      align: 4
+      vec3  :normal,        align: 4
+      vec2  :texcoord, [2], align: 4
+      color :color,         align: 4
+    }
+
+    def stringify_vertex(vertex)
+      <<-VERTEX_DESCRIPTION
+      Position:  #{vertex.position.to_h}
+      Normal:    #{vertex.normal.to_h}
+      Texcoords: [#{vertex.texcoord(0).to_h}, #{vertex.texcoord(1).to_h}]
+      Color:     #{vertex.color.to_h}
+      VERTEX_DESCRIPTION
+    end
 
     # So let's create a vertex.
     a_vertex = Vertex.new { |v|
-      v.position = Vec3.new { |p| p.x = 1; p.y = 2; p.z = 3 }
-      v.normal   = Vec3.new { |n| n.x = 0.707107; n.y = 0; n.z = 0.707107 }
+      v.position      = Vec3.new { |p| p.x = 1; p.y = 2; p.z = 3 }
+      v.normal        = Vec3.new { |n| n.x = 0.707107; n.y = 0; n.z = 0.707107 }
       # For array types, we must use set_* functions, as the name= shorthand for
       # struct members only assigns to the first element of an array.
-      v.texcoord = Vec2.new { |t| t.x = 1.0; t.y = 1.0 }
-      # Though if you're masochistic you could also do this:
-      v.__send__(:texcoord=, Vec2.new { |t| t.x = 0.5; t.y = 0.5 }, 1)
-      v.color    = Color.new { |c| c.r = 255; c.g = 127; c.b = 63; c.a = 220 }
+      v.texcoord      = Vec2.new { |t| t.x = 1.0; t.y = 1.0 }
+      # This also works:
+      v[:texcoord, 1] = Vec2.new { |t| t.x = 0.5; t.y = 0.5 }
+      v.color         = Color.new { |c| c.r = 255; c.g = 127; c.b = 63; c.a = 220 }
     }
 
-    puts <<VERTEX_DESCRIPTION
-    Our vertex has the following properties:
-      Position: #{a_vertex.position.to_h}
-      Normal:   #{a_vertex.normal.to_h}
-      Texcoords: [
-        #{a_vertex.texcoord(0).to_h}
-        #{a_vertex.texcoord(1).to_h}
-      ]
-      Color:    #{a_vertex.color.to_h}
-
-    VERTEX_DESCRIPTION
+    puts "Our vertex:\n#{stringify_vertex a_vertex}"
 
     # For kicks, let's create an array.
     some_vertices = Vertex[64]
@@ -90,16 +89,7 @@ How you use it, ultimately, is really up to you.
     # And set all vertices to the above vertex.
     some_vertices.map! { a_vertex }
 
-    puts <<VERTEX_DESCRIPTION
-    Our vertex in the array at index 36 has the following properties:
-      Position: #{some_vertices[36].position.to_h}
-      Normal:   #{some_vertices[36].normal.to_h}
-      Texcoords: [
-        #{some_vertices[36].texcoord(0).to_h}
-        #{some_vertices[36].texcoord(1).to_h}
-      ]
-      Color:    #{some_vertices[36].color.to_h}
-    VERTEX_DESCRIPTION
+    puts "Our vertex at index 36:\n#{stringify_vertex some_vertices[36]}"
 
 
 License
