@@ -236,6 +236,8 @@ class CStruct
     end
 
     TYPE_ALIASES[new_name] = old_name
+    Builder.flush_type_methods!
+    self
   end
 
 
@@ -278,6 +280,8 @@ class CStruct
       end # setter
 
     end # class_exec
+
+    Builder.flush_type_methods!
 
     klass
   end
@@ -524,7 +528,8 @@ class CStruct
 
   class <<self ; alias_method :[], :new ; end
 
-end # class CStruct
+  Builder.flush_type_methods!
 
+end # class CStruct
 
 end # module Snow
