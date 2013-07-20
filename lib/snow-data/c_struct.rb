@@ -208,6 +208,35 @@ class CStruct
 
 
   #
+  # Gets the actual type for a given type. Only useful for deducing the target
+  # type for a type alias.
+  #
+  def self.real_type_of(type)
+    while TYPE_ALIASES.include?(type)
+      type = TYPE_ALIASES[type]
+    end
+    type
+  end
+
+
+  #
+  # Aliases the type for old_name to new_name. Raises
+  #
+  def self.alias_type(new_name, old_name)
+    return self if new_name == old_name
+    old_name = real_type_of(old_name)
+
+    raise "There is no type defined for #{old_name}" if ! ALIGNMENTS.include?(old_name)
+
+    if TYPE_ALIASES.include?(new_name) || ALIGNMENTS.include?(new_name)
+      raise ArgumentError, "Type <#{new_name}> is already defined in CStruct"
+    end
+
+    TYPE_ALIASES[new_name] = old_name
+  end
+
+
+  #
   # call-seq:
   #     add_type(name, klass) => klass
   #
