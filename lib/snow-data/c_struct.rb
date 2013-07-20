@@ -229,9 +229,9 @@ class CStruct
     return self if new_name == old_name
     old_name = real_type_of(old_name)
 
-    if ! ALIGNMENTS.include?(old_name)
+    if ! SIZES.include?(old_name)
       raise ArgumentError, "There is no type named #{old_name} to alias"
-    elsif TYPE_ALIASES.include?(new_name) || ALIGNMENTS.include?(new_name)
+    elsif TYPE_ALIASES.include?(new_name) || SIZES.include?(new_name)
       raise ArgumentError, "Type <#{new_name}> is already defined in CStruct"
     end
 
