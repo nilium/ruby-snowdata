@@ -65,6 +65,7 @@ class Snow::CStruct::Builder
       __send__(:alias_method, short, long)
     }
 
+    self
   end # flush_type_methods!
 
 end
