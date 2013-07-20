@@ -96,7 +96,7 @@ module Snow::CStruct::StructBase
     id_text     = __id__.to_s(16).rjust(14, ?0)
     addr_text   = self.address.to_s(16).rjust(14, ?0)
 
-    member_text = if ! null? && CStruct.long_inspect
+    member_text = if ! null? && ::Snow::CStruct.long_inspect
       # Get member text
       all_members_text = (self.class::MEMBERS.map do |member|
         name        = member.name
