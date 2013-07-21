@@ -111,6 +111,9 @@ class CStruct
       (?<type_alignment_decl> \s* \: \s*            # 4
         (?<type_alignment> \d+ )                    # 5
         )?
+      (?<offset_decl> \s* @ \s*                     # 6
+        (?<offset> \d+ )                            # 7
+      )?
     \s* (?: ; | $ | \n) # terminator
   }mx
 
@@ -332,17 +335,24 @@ class CStruct
   # Encodings are how you define C structs using Snow::CStruct. It's a fairly
   # simple string format, defined as such:
   #
+  #     offset        ::=   '@' integer
   #     length        ::=   '[' integer ']'
   #     alignment     ::=   ':' integer
   #     typename      ::=   ':' Name
   #     member_name   ::=   Name
-  #     member_decl   ::=   member_name typename [ length ] [ alignment ]
+  #     member_decl   ::=   member_name typename [ length ] [ alignment ] [ offset ]
   #
   # So, for example, the encoding string "foo: float[4]:8" defines a C struct
   # with a single member, `foo`, which is an array of 4 32-bit floats with an
   # alignment of 8 bytes. By default, all types are aligned to their base type's
   # size (e.g., "foo: float" would be algiend to 4 bytes) and all members have a
   # length of 1 unless specified otherwise.
+  #
+  # Offsets should only be specified if you absolutely know what you're doing,
+  # otherwise you may break certain things (for example, native sizing on ints).
+  # In addition, an offset can be provided to simulate union-like behavior for
+  # some members, though you are better off using the Builder methods to define
+  # a union than you are via an encoding string.
   #
   # A list of all types follows, including their short and long names, and their
   # corresponding types in C. Short names are only provided for convenience and
@@ -513,7 +523,8 @@ class CStruct
       length      = (match[3] || 1).to_i
       align       = (match[5] || ALIGNMENTS[type] || 1).to_i
       size        = SIZES[type] * length
-      offset      = Memory.align_size(total_size, align)
+      offset      = (match[7] || 0).to_i
+      offset += Memory.align_size(total_size, align) if ! match[7]
       total_size  = offset + size
 
       StructMemberInfo[name, type, size, length, align, offset]
@@ -529,7 +540,7 @@ class CStruct
   #
   def self.encode_member_info(members)
     members.map { |member|
-      "#{member.name}:#{member.type}[#{member.length}]:#{member.alignment}"
+      "#{member.name}:#{member.type}[#{member.length}]:#{member.alignment}@#{member.offset}"
     }.join(?;)
   end
 
