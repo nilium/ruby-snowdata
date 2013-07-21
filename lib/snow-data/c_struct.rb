@@ -423,23 +423,38 @@ class CStruct
       raise ArgumentError, "wrong number of arguments (#{args.length} for 0..2)"
     end
 
-    klass_name = klass_name.intern if klass_name
-
     members = if block_given?
       Builder.new(&block).member_info
     else
       decode_member_info(encoding)
     end
 
-    raise "No valid members found in encoding" if members.empty?
+    __define_struct__(klass_name, build_struct_type(members))
+  end
 
-    klass = build_struct_type(members)
 
-    if klass_name
-      const_set(klass_name, klass)
-      add_type(klass_name, klass)
+  def self.__build_struct__(name, is_union, &block)
+    members = Builder.new(is_union: is_union, &block).member_info
+    __define_struct__(name, build_struct_type(members))
+  end
+
+
+  def self.union(name = nil, &block)
+    __build_struct__(name, true, &block)
+  end
+
+
+  def self.struct(name = nil, &block)
+    __build_struct__(name, false, &block)
+  end
+
+
+  def self.__define_struct__(name, klass)
+    if name
+      name = name.to_sym
+      const_set(name, klass)
+      add_type(name, klass)
     end
-
     klass
   end
 
