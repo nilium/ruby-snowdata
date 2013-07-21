@@ -433,22 +433,60 @@ class CStruct
   end
 
 
+  #
+  # :nodoc:
+  #
+  # Passes a block through to a Builder and provides a flag for whether the root
+  # level of the builder is a struct or union.
+  #
   def self.__build_struct__(name, is_union, &block)
     members = Builder.new(is_union: is_union, &block).member_info
     __define_struct__(name, build_struct_type(members))
   end
 
 
+  #
+  # call-seq:
+  #   union { ... } => Class
+  #   union(name) { ... } => Class
+  #
+  # Defines a union with a block for declaring the members of the union using
+  # Builder methods. Unions are basically structs whose root members occupy the
+  # same or adjacent locations in memory. You may use Builder#struct to define
+  # multiple internal unnamed structs inside a union.
+  #
+  # If a name is provided, the resulting class will be added as a constant under
+  # CStruct and it will be added as a type recognized in other CStruct-defined
+  # structs and unions.
+  #
   def self.union(name = nil, &block)
     __build_struct__(name, true, &block)
   end
 
 
+  #
+  # call-seq:
+  #   struct { ... } => Class
+  #   struct(name) { ... } => Class
+  #
+  # Defines a struct with a block for declaring the members of the struct using
+  # Builder methods. Members of structs do not share space, unlike unions.
+  #
+  # If a name is provided, the resulting class will be added as a constant under
+  # CStruct and it will be added as a type recognized in other CStruct-defined
+  # structs and unions.
+  #
   def self.struct(name = nil, &block)
     __build_struct__(name, false, &block)
   end
 
 
+  #
+  # :nodoc:
+  #
+  # Used by ::__build_struct__ and ::new to handle defining a struct class's
+  # constant and adding its type to those recognized by CStruct.
+  #
   def self.__define_struct__(name, klass)
     if name
       name = name.to_sym
