@@ -16,8 +16,6 @@ class Snow::CStruct ; end
 class Snow::CStruct::Builder
 
   #
-  # :nodoc:
-  #
   # Struct describing a level of a C struct. Contains a flag for whether the
   # level is a union, its offset, alignment, size, and its members (which may
   # include descendant levels).
@@ -25,9 +23,10 @@ class Snow::CStruct::Builder
   MemberStackLevel = Struct.new(:is_union, :offset, :alignment, :size, :members)
 
 
-  # :nodoc:
+  #
   # A Set of symbols for all types whose declaration methods have already been
   # defined by ::flush_type_methods!.
+  #
   @@defined_types = Set.new
 
 
@@ -54,8 +53,6 @@ class Snow::CStruct::Builder
 
 
   #
-  # :nodoc:
-  #
   # Flattens a MemberStackLevel's members into a single array and returns an
   # array of StructMemberInfo objects.
   #
@@ -71,8 +68,6 @@ class Snow::CStruct::Builder
   end
 
 
-  #
-  # :nodoc:
   #
   # Iterates over a level's members, including sub-levels, and adjusts their
   # offsets and the level's size accordingly. This is essentially the processing
@@ -178,8 +173,6 @@ class Snow::CStruct::Builder
   end # flush_type_methods!
 
 
-  #
-  # :nodoc:
   #
   # Creates a new member level for the builder and instance_exec-s the block,
   # then passes its alignment onto its ancestor level.
