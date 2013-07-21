@@ -551,8 +551,8 @@ class CStruct
     members.freeze
 
     # Get the alignment, size, aligned size, and encoding of the struct.
-    alignment    = members.map { |member| member.alignment }.max { |lhs, rhs| lhs <=> rhs }
-    type_size    = members.last.size + members.last.offset
+    alignment    = members.map(&:alignment).max
+    type_size    = members.map { |m| m.offset + m.size }.max
     aligned_size = Memory.align_size(type_size, alignment)
     # Oddly enough, it would be easier to pass the encoding string into this
     # function, but then it would ruin the nice little thing I have going where
