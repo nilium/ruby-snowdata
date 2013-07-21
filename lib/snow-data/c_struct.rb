@@ -469,6 +469,17 @@ class CStruct
   # CStruct and it will be added as a type recognized in other CStruct-defined
   # structs and unions.
   #
+  # ### Example
+  #
+  #     CStruct.union {
+  #       # size, name, and some_value all share the same memory in the union
+  #       # so set_name will modify size and some_value, and any transposition
+  #       # of those names is also true.
+  #       size_t    :size
+  #       uint32_t  :name
+  #       double    :some_value
+  #     }
+  #
   def self.union(name = nil, &block)
     __build_struct__(name, true, &block)
   end
@@ -485,6 +496,17 @@ class CStruct
   # If a name is provided, the resulting class will be added as a constant under
   # CStruct and it will be added as a type recognized in other CStruct-defined
   # structs and unions.
+  #
+  # ### Example
+  #
+  #     CStruct.struct {
+  #       # size, red, green, and blue all get their own memory in the struct,
+  #       # one after the other. Modifying one value will not modify another.
+  #       size_t    :size
+  #       uint16_t  :red[256]
+  #       uint16_t  :green[256]
+  #       uint16_t  :blue[256]
+  #     }
   #
   def self.struct(name = nil, &block)
     __build_struct__(name, false, &block)
