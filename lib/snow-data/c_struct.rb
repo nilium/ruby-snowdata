@@ -79,7 +79,7 @@ class CStruct
   #     CStruct.member_encoding(:foo, :float, 32, nil) # => "foo:float[32]:4"
   #
   def self.member_encoding(name, type, length: 1, alignment: nil)
-    type = type.intern
+    type = type.to_sym
     alignment = alignment || ALIGNMENTS[type] || ALIGNMENTS[:*]
     raise ArgumentError, "Invalid length: #{length}. Must be > 0." if length < 1
     raise ArgumentError, "Invalid alignment: #{alignment}. Must be a power of two." if ! power_of_two?(alignment)
@@ -518,8 +518,8 @@ class CStruct
     total_size = 0
     encoding.scan(ENCODING_REGEX).map do
       |match|
-      name        = match[0].intern
-      type        = real_type_of(match[1].intern)
+      name        = match[0].to_sym
+      type        = real_type_of(match[1].to_sym)
       length      = (match[3] || 1).to_i
       align       = (match[5] || ALIGNMENTS[type] || 1).to_i
       size        = SIZES[type] * length
