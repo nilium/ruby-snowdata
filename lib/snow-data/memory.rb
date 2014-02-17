@@ -77,7 +77,13 @@ class Snow::Memory
   # overlap, refer to different chunks of memory, one might be null, etc.
   #
   def ==(other)
-    self.address == other.address && self.bytesize == other.bytesize
+    return false unless other
+
+    if other.kind_of?(Memory) || (other.respond_to?(:address) && other.respond_to?(:bytesize))
+      self.address == other.address && self.bytesize == other.bytesize
+    else
+      false
+    end
   end
 
 
