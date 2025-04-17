@@ -5,6 +5,7 @@
 */
 
 #include "ruby.h"
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -1668,7 +1669,9 @@ static VALUE sd_memory_copy(int argc, VALUE *argv, VALUE self)
   size_t destination_offset;
   size_t byte_size;
   size_t self_byte_size;
+  #if defined(SD_WARN_ON_NO_BYTESIZE_METHOD) || defined(SD_WARN_ON_IMPLICIT_COPY_SIZE)
   int source_is_data = 0;
+  #endif
 
   sd_check_null_block(self);
   rb_check_frozen(self);
@@ -1691,11 +1694,13 @@ static VALUE sd_memory_copy(int argc, VALUE *argv, VALUE self)
     }
   }
 
-  if (RTEST(rb_obj_is_kind_of(sd_source, rb_cData))) {
+  if (RTEST(rb_obj_is_kind_of(sd_source, rb_cObject))) {
     /* Otherwise extract a pointer from the object if it's a Data object */
     const struct RData *source_data = RDATA(sd_source);
     source_pointer = ((const uint8_t *)source_data->data);
+    #if defined(SD_WARN_ON_NO_BYTESIZE_METHOD) || defined(SD_WARN_ON_IMPLICIT_COPY_SIZE)
     source_is_data = 1;
+    #endif
   } else if (RTEST(rb_obj_is_kind_of(sd_source, rb_cNumeric))) {
     /* Otherwise, if it's a Numeric, try to convert what is assumed to be an
       address to a pointer */
@@ -1890,7 +1895,8 @@ static VALUE sd_align_size(int argc, VALUE *argv, VALUE self)
 void Init_snowdata_bindings(void)
 {
   VALUE sd_snow_module  = rb_define_module("Snow");
-  VALUE sd_memory_klass = rb_define_class_under(sd_snow_module, "Memory", rb_cData);
+  VALUE sd_memory_klass = rb_define_class_under(sd_snow_module, "Memory", rb_cObject);
+  rb_undef_alloc_func(sd_memory_klass);
 
   kSD_IVAR_BYTESIZE     = rb_intern("@__bytesize__");
   kSD_IVAR_ALIGNMENT    = rb_intern("@__alignment__");

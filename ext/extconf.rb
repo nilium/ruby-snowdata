@@ -5,9 +5,6 @@
 
 require 'mkmf'
 
-# Compile as C99
-$CFLAGS += " -std=c99 -Wall -pedantic"
-
 OptKVPair = Struct.new(:key, :value)
 
 option_mappings = {
@@ -53,7 +50,7 @@ else
 end
 
 $CFLAGS += ' -DSD_ALLOW_ALLOCA' if options[:allow_alloca]
-$CFLAGS += ' -DSD_SD_WARN_ON_IMPLICIT_COPY_SIZE' if options[:warn_implicit_size]
+$CFLAGS += ' -DSD_WARN_ON_IMPLICIT_COPY_SIZE' if options[:warn_implicit_size]
 $CFLAGS += ' -DSD_WARN_ON_NO_BYTESIZE_METHOD' if options[:warn_no_bytesize]
 $CFLAGS += ' -DSD_VERBOSE_COPY_LOG' if options[:debug_memory_copy]
 $CFLAGS += ' -DSD_VERBOSE_MALLOC_LOG' if options[:debug_allocations]

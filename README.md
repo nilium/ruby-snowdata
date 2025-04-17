@@ -8,30 +8,21 @@ Intro
 -----
 
 Snow-Data is a simple gem for dealing with memory and defining structs in a
-C-like way. Incidentally, it's also hideously unsafe, so everything is tainted
-by default. You'll thank me for this later, even if almost every operation does
-bounds-checking where possible to ensure you're not being a horrible person.
+C-like way. It's also hideously unsafe, so everything is tainted by default.
 
 For more information on usage, see the rdoc documentation for Snow::Memory
-and Snow::CStruct, as it explains the important things. Like CStructs. And how
-to talk to people. Ok, it can't help you with that.
-
-_ALLONS-Y!_
-
+and Snow::CStruct, as it should explain most of the important things.
 
 Example
 -------
 
-For those wanting a quick-ish example of using snow-data, I'll include one here
-showing you how you might define a few structs, including a Vec3, Vec2, Color,
-and Vertex and working with those.
+For those wanting a quick-ish example of using snow-data, the following example
+shows how to define a few structs. These are a Vec3, Vec2, Color, and Vertex,
+which may be common in game code.
 
-Bear in mind that, down the road, it will also be possible to assign snow-math
-types to these as well (provided they use the same underlying types), though I
-wouldn't use this for defining data types for anything other than transit to
-another API that expects its data in a format like this.
-
-How you use it, ultimately, is really up to you.
+In practice, this tends not to be highly useful except for interacting with
+some APIs over FFI, such as OpenGL. That said, if it happens to be useful,
+all the better.
 
     #!/usr/bin/env ruby -w
 
@@ -42,11 +33,12 @@ How you use it, ultimately, is really up to you.
     # it helps to illustrate that you can specify alignment).
     Vec3   = Snow::CStruct[:Vec3, 'x: float :4; y: float :4; z: float :4']
     Vec2   = Snow::CStruct[:Vec2, 'x: float :4; y: float :4']
+
     # ui8 is shorthand for uint8_t -- you can write either, and the documentation
     # for CStruct::new explains the short- and long-form names for each primitive
     # type provided by Snow-Data. Further, CStructs defined with a name, as with
     # Vec3, Vec2, and Color, have getters and setters defined in the Memory class
-    # and are usable as member types, as I'll show below.
+    # and are usable as member types (see below).
     Color  = Snow::CStruct[:Color, 'r: ui8; g: ui8; b: ui8; a: ui8']
 
     # Define a vertex type whose members are all also 4-byte aligned. The vertex
@@ -69,7 +61,7 @@ How you use it, ultimately, is really up to you.
       VERTEX_DESCRIPTION
     end
 
-    # So let's create a vertex.
+    # Now create a vertex:
     a_vertex = Vertex.new { |v|
       v.position      = Vec3.new { |p| p.x = 1; p.y = 2; p.z = 3 }
       v.normal        = Vec3.new { |n| n.x = 0.707107; n.y = 0; n.z = 0.707107 }
@@ -83,7 +75,7 @@ How you use it, ultimately, is really up to you.
 
     puts "Our vertex:\n#{stringify_vertex a_vertex}"
 
-    # For kicks, let's create an array.
+    # Create an array of 64 vertices:
     some_vertices = Vertex[64]
 
     # And set all vertices to the above vertex.
