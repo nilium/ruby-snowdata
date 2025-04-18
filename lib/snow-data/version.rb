@@ -7,6 +7,6 @@ module Snow
   #
   # The snow-data version string.
   #
-  SNOW_DATA_VERSION = '1.3.1'.freeze
+  SNOW_DATA_VERSION = '1.4.0'.freeze
 
 end

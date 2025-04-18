@@ -7,7 +7,7 @@ require File.expand_path('../lib/snow-data/version.rb', __FILE__)
 Gem::Specification.new { |s|
   s.name        = 'snow-data'
   s.version     = Snow::SNOW_DATA_VERSION
-  s.date        = '2013-07-20'
+  s.date        = '2025-04-17'
   s.summary     = "Snow-Data: for working with memory like you've got nothing to lose."
   s.description = <<-EOS
 Snow-Data is a gem for allocating memory and working with existing blocks of
@@ -16,14 +16,13 @@ also provides functionality for defining C-struct classes, including those with
 other structs as members.
   EOS
   s.authors     = [ 'Noel Raymond Cower' ]
-  s.email       = 'ncower@gmail.com'
+  s.email       = 'ncower@nil.dev'
   s.files       = Dir.glob('lib/**/*.rb') +
                   Dir.glob('ext/**/*.{c,h,rb}') +
                   [ 'COPYING', 'README.md' ]
   s.extensions << 'ext/extconf.rb'
   s.homepage    = 'https://github.com/nilium/ruby-snowdata'
-  s.license     = 'Simplified BSD'
-  s.has_rdoc    = true
+  s.license     = 'BSD-2-Clause'
   s.extra_rdoc_files = [
       'ext/snow-data/snow-data.c',
       'README.md',
@@ -33,5 +32,5 @@ other structs as members.
                     '--main' << 'README.md' <<
                     '--markup=markdown' <<
                     '--line-numbers'
-  s.required_ruby_version = '>= 2.0.0'
+  s.required_ruby_version = '>= 3.3.0'
 }
